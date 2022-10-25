@@ -55,7 +55,7 @@ export const Register: FC = () => {
           register={register}
           error={errors.confirmPassword?.message}
         />
-        <Button></Button>
+        <Button type="submit" value="Register"/>
         <StyledMessage>
           You have an account ? <FormLink to="/login">Log in</FormLink>
         </StyledMessage>

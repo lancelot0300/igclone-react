@@ -50,7 +50,7 @@ export const Login: FC = () => {
           register={register}
           error={errors.password?.message}
         />
-        <Button></Button>
+        <Button type="submit" value= "Log in"/>
         <StyledMessage>
           No account ? <FormLink to="/register">Register</FormLink>
         </StyledMessage>

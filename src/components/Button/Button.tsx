@@ -1,6 +1,13 @@
 import { FC } from "react";
 import { StyledButton } from "./Button.styles";
 
-export const Button: FC = () => {
-  return <StyledButton type="submit" />;
+
+interface ButtonProps {
+  type: string,
+  value: string
+}
+
+
+export const Button: FC<ButtonProps> = ({type, value}) => {
+  return <StyledButton type={type} value={value} />;
 };
