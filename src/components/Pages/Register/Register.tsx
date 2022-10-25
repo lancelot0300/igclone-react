@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../../Button/Button";
 import { Form } from "../../Form/Form";
 import { FormLink, StyledMessage } from "../../Form/Form.style";
@@ -17,10 +17,17 @@ export const Register: FC = () => {
     confirmPassword: yup.string().oneOf([yup.ref("password"), null], "Passwords must match").required("Confirm password is required"),
   })
 
-  const { register, handleSubmit, formState:{errors} } = useForm({
+  interface FormValues {
+    login: string,
+    password: string,
+    confirmPassword:string,
+  }
+
+  const { register, handleSubmit, formState:{errors} } = useForm<FormValues>({
     resolver: yupResolver(schema),
   })
-  const onSubmit = (data : {}) => {
+
+  const onSubmit:SubmitHandler<FormValues> = (data) => {
     console.log(data);
   };
 
