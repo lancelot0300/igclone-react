@@ -7,6 +7,7 @@ export const LoginContainer = styled.div`
   color: white;
   height: 90vh;
   min-height: 320px;
+  width:100%;
 `;
 
 export const FormContainer = styled.div`
@@ -15,6 +16,7 @@ export const FormContainer = styled.div`
   text-align: center;
   font-size: 1.3rem;
   padding: 30px;
+  width:100%;
 `;
 
 export const FormStyled = styled.form`
@@ -23,5 +25,6 @@ export const FormStyled = styled.form`
   align-items: center;
   justify-content: center;
   gap: 20px;
+  width:100%;
 `;
 

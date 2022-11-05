@@ -4,8 +4,8 @@ import { MenuContainer, MenuLink } from "./MenuContainer.styles";
 const Menu: FC = () => {
   return (
     <MenuContainer>
+      <MenuLink to="/">Home</MenuLink>
       <MenuLink to="/login">Login</MenuLink>
-      <MenuLink to="/register">Register</MenuLink>
     </MenuContainer>
   );
 };

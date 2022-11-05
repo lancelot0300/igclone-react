@@ -4,10 +4,11 @@ import { StyledButton } from "./Button.styles";
 
 interface ButtonProps {
   type: string,
-  value: string
+  children: string
+  disabled: boolean;
 }
 
 
-export const Button: FC<ButtonProps> = ({type, value}) => {
-  return <StyledButton type={type} value={value} />;
+export const Button: FC<ButtonProps> = ({children, disabled}) => {
+  return <StyledButton disabled={disabled}>{children}</StyledButton>;
 };

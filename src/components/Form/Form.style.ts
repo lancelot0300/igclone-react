@@ -8,6 +8,9 @@ export const FormContainer = styled.div`
   text-align: center;
   font-size: 1.3rem;
   padding: 30px;
+  width:60%;
+  min-width:250px; 
+  max-width:500px; 
 `;
 
 export const FormStyled = styled.form`

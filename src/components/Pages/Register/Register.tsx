@@ -1,18 +1,21 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../../Button/Button";
 import { Form } from "../../Form/Form";
 import { FormLink, StyledMessage } from "../../Form/Form.style";
 import { Input } from "../../Input/Input";
-import { RegisterContainer } from "./Register.styles";
 import * as yup from 'yup'
 import {yupResolver} from "@hookform/resolvers/yup"
+import { auth } from "../../../config/config";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 
 export const Register: FC = () => {
 
+  const [wait, setWait] = useState(false);
+
   const schema = yup.object().shape({
-    login: yup.string().min(5, "Login must be at least 5 characters").required("Login is required"),
+    login: yup.string().email('Invalid email format').required('Required'),
     password: yup.string().min(8, "Password must be at least 8 characters").required("Password is required"),
     confirmPassword: yup.string().oneOf([yup.ref("password"), null], "Passwords must match").required("Confirm password is required"),
   })
@@ -23,20 +26,28 @@ export const Register: FC = () => {
     confirmPassword:string,
   }
 
-  const { register, handleSubmit, formState:{errors} } = useForm<FormValues>({
+  const { register, handleSubmit, formState:{errors},setError } = useForm<FormValues>({
     resolver: yupResolver(schema),
   })
 
-  const onSubmit:SubmitHandler<FormValues> = (data) => {
-    console.log(data);
+  const onSubmit:SubmitHandler<FormValues> = async (data) => {
+    try {
+      setWait(true);
+      const user = await createUserWithEmailAndPassword(auth, data.login, data.password)
+    } 
+    catch (error) {
+      if(error instanceof Error) {
+        setError("login", { type: 'custom', message: error.message });
+      }
+    }
+    setWait(false);
   };
 
   return (
-    <RegisterContainer>
       <Form onSubmit={handleSubmit(onSubmit)} title="Register">
         <Input
           type="login"
-          placeholder="Login"
+          placeholder="Email"
           name="login"
           register={register}
           error={errors.login?.message}
@@ -55,11 +66,10 @@ export const Register: FC = () => {
           register={register}
           error={errors.confirmPassword?.message}
         />
-        <Button type="submit" value="Register"/>
+        <Button disabled={wait} type="submit">Register</Button>
         <StyledMessage>
           You have an account ? <FormLink to="/login">Log in</FormLink>
         </StyledMessage>
       </Form>
-    </RegisterContainer>
   );
 };
