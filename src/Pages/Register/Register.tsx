@@ -1,12 +1,12 @@
 import { FC, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Button } from "../../Button/Button";
-import { Form } from "../../Form/Form";
-import { FormLink, StyledMessage } from "../../Form/Form.style";
-import { Input } from "../../Input/Input";
+import { Button } from "../../components/Button/Button";
+import { Form } from "../../components/Form/Form";
+import { FormLink, StyledMessage } from "../../components/Form/Form.style";
+import { Input } from "../../components/Input/Input";
 import * as yup from 'yup'
 import {yupResolver} from "@hookform/resolvers/yup"
-import { auth } from "../../../config/config";
+import { auth } from "../../config/config";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
 

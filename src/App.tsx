@@ -3,9 +3,9 @@ import { Route, Routes } from "react-router-dom";
 import { reset } from "styled-reset";
 import styled, { createGlobalStyle } from "styled-components";
 import Menu from "./components/Menu/Menu";
-import { Home } from "./components/Pages/Home/Home";
-import { Login } from "./components/Pages/Login/Login";
-import { Register } from "./components/Pages/Register/Register";
+import { Home } from "./Pages/Home/Home";
+import { Login } from "./Pages/Login/Login";
+import { Register } from "./Pages/Register/Register";
 
 const GlobalStyle = createGlobalStyle`
 

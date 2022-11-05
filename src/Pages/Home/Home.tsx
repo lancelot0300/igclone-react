@@ -1,8 +1,8 @@
 import { collection, getDocs } from "firebase/firestore";
 import { FC, useEffect, useState } from "react";
-import { db } from "../../../config/config";
-import { IPost } from "../../../interfaces/interfaces";
-import Post from "../../Post/Post";
+import { db } from "../../config/config";
+import { IPost } from "../../interfaces/interfaces";
+import Post from "../../components/Post/Post";
 
 export const Home: FC = () => {
 
