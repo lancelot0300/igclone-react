@@ -1,35 +1,42 @@
 import { collection, getDocs } from "firebase/firestore";
 import { FC, useEffect, useState } from "react";
 import { db } from "../../config/config";
-import { IPost } from "../../interfaces/interfaces";
-import Post from "../../components/Post/Post";
+import { IData, IPost } from "../../interfaces/interfaces";
+import { Post } from "../../components/Post/Post";
 
 export const Home: FC = () => {
-
-
-  const [posts, setPosts] = useState<IPost[]>();
+  const [posts, setPosts] = useState<IData[]>([]);
 
   useEffect(() => {
     async function getUser() {
       const postsColl = collection(db, "posts");
-      
-     getDocs(postsColl).then((querySnapshot) => { 
-
-        const posts: IPost[] = [];
-        querySnapshot.forEach((doc) => {
-          posts.push(doc.data() as IPost);
+      getDocs(postsColl)
+        .then((querySnapshot) => {
+          const posts: IData[] = [];
+          querySnapshot.forEach((doc) => {
+            posts.push({
+              id: doc.id,
+              data: doc.data() as IPost,
+            });
+          });
+          setPosts(posts);
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
         });
-        setPosts(posts);
-      });
     }
     getUser();
   }, []);
 
+  const renderPosts = () => {
+    if (posts) {
+      return posts.map((post) => <Post key={post.id} data={post} />);
+    }
+  };
+
   return (
     <>
-      {posts?.map((post) => (
-        <Post post={post} key={post.id} />
-      ))}
+      {renderPosts()}
     </>
   );
 };

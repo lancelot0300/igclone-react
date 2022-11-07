@@ -1,11 +1,10 @@
 import styled from "styled-components";
 
 export const StyledPost = styled.div`
-  min-height: 250px;
   background-color: red;
   width: 85%;
-  aspect-ratio: auto 4 / 6;
   margin: 50px auto;
+  max-height: 800px;
   border-radius: 10px;
   padding: 10px;
   background-color: #c0c0c0;
@@ -18,4 +17,7 @@ export const StyledPost = styled.div`
 
 export const StyledTitle = styled.p`
   text-transform: capitalize;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 10px;
 `;
