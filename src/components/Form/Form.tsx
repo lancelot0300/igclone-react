@@ -2,7 +2,7 @@ import React, { FC, ReactNode } from "react";
 import { FormContainer, FormStyled, StyledTitle } from "./Form.style";
 
 interface FormProps {
-  children: ReactNode;
+  children: ReactNode[];
   onSubmit: React.FormEventHandler<HTMLFormElement>;
   title: string;
 }

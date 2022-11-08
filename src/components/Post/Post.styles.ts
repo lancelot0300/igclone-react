@@ -9,7 +9,6 @@ export const StyledPost = styled.div`
   padding: 10px;
   background-color: #c0c0c0;
   color: #000;
-
   @media (min-width: 640px) {
     width: 540px;
   }

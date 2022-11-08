@@ -6,62 +6,102 @@ import { FormLink, StyledMessage } from "../../components/Form/Form.style";
 import { Input } from "../../components/Input/Input";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { ILoginFormValues } from "../../interfaces/interfaces";
+import { useSelector } from "react-redux";
+import { RootState, useAppDispatch } from "../../state/store";
+import { loginSuccess } from "../../state/features/auth/authSlice";
+import {
+  browserSessionPersistence,
+  setPersistence,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../../config/config";
+import { useNavigate } from "react-router-dom";
 
 export const Login: FC = () => {
-
-  const [wait, setWait] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { user } = useSelector((state: RootState) => state.auth);
 
   const schema = yup.object().shape({
-    login: yup.string().email('Invalid email format').required('Required'),
+    login: yup.string().email("Invalid email format").required("Required"),
     password: yup.string().required("Password is required"),
   });
-
-  interface FormValues {
-    login: string;
-    password: string;
-  }
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setError
-  } = useForm<FormValues>({
+    setError,
+  } = useForm<ILoginFormValues>({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit:SubmitHandler<FormValues> = async (data) => {
-    try {
-      setWait(true);
-      const user = await console.log('t');
-    } 
-    catch (error) {
-      if(error instanceof Error) {
-        setError("login", { type: 'custom', message: error.message });
-      }
-    }
-    setWait(false);
+  const onSubmit: SubmitHandler<ILoginFormValues> = async (data) => {
+    setLoading(true);
+    setPersistence(auth, browserSessionPersistence)
+    .then(() => {
+      return signInWithEmailAndPassword(auth, data.login, data.password)
+        .then((userCredential) => {
+          const user = {
+            email: userCredential.user.email || "",
+            uid: userCredential.user.uid,
+          };
+          dispatch(loginSuccess(user));
+          navigate("/");
+        })
+        .catch((error) => {
+          switch (error.code) {
+            case "auth/user-not-found":
+              setError("login", {
+                type: "manual",
+                message: "User not found",
+              });
+              setLoading(false);
+              break;
+            case "auth/wrong-password":
+              setError("password", {
+                type: "manual",
+                message: "Wrong password",
+              });
+              setLoading(false);
+              break;
+            default:
+              setError("login", {
+                type: "manual",
+                message: error.message,
+              });
+              setLoading(false);
+          }
+        });
+    });
   };
+
   return (
-    <Form onSubmit={handleSubmit(onSubmit)} title="Login">
-      <Input
-        type="login"
-        placeholder="Email"
-        name="login"
-        register={register}
-        error={errors.login?.message}
-      />
-      <Input
-        type="password"
-        placeholder="Password"
-        name="password"
-        register={register}
-        error={errors.password?.message}
-      />
-      <Button disabled={wait} type="submit">Log in</Button>
-      <StyledMessage>
-        No account ? <FormLink to="/register">Register</FormLink>
-      </StyledMessage>
-    </Form>
+    <>
+      <Form onSubmit={handleSubmit(onSubmit)} title="Login">
+        <Input
+          type="login"
+          placeholder="Email"
+          name="login"
+          register={register}
+          error={errors.login?.message}
+        />
+        <Input
+          type="password"
+          placeholder="Password"
+          name="password"
+          register={register}
+          error={errors.password?.message}
+        />
+        <Button disabled={loading} type="submit">
+          Log in
+        </Button>
+        <StyledMessage>
+          No account ? <FormLink to="/register">Register</FormLink>
+        </StyledMessage>
+      </Form>
+    </>
   );
 };
