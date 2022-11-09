@@ -10,10 +10,9 @@ export const MenuContainer = styled.div`
   min-height: 60px;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
+  padding: 20px;
   background-color: rgb(27 43 82);
-  gap: 20px;
-  padding-right: 20px;
 `;
 export const MenuLink = styled(Link)`
   color: white;

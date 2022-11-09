@@ -7,11 +7,10 @@ import { Input } from "../../components/Input/Input";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ILoginFormValues } from "../../interfaces/interfaces";
-import { useSelector } from "react-redux";
-import { RootState, useAppDispatch } from "../../state/store";
+import {  useAppDispatch } from "../../state/store";
 import { loginSuccess } from "../../state/features/auth/authSlice";
 import {
-  browserSessionPersistence,
+  browserLocalPersistence,
   setPersistence,
   signInWithEmailAndPassword,
 } from "firebase/auth";
@@ -22,7 +21,6 @@ export const Login: FC = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { user } = useSelector((state: RootState) => state.auth);
 
   const schema = yup.object().shape({
     login: yup.string().email("Invalid email format").required("Required"),
@@ -40,11 +38,12 @@ export const Login: FC = () => {
 
   const onSubmit: SubmitHandler<ILoginFormValues> = async (data) => {
     setLoading(true);
-    setPersistence(auth, browserSessionPersistence)
+    setPersistence(auth, browserLocalPersistence)
     .then(() => {
       return signInWithEmailAndPassword(auth, data.login, data.password)
         .then((userCredential) => {
           const user = {
+            isAuth: !!userCredential,
             email: userCredential.user.email || "",
             uid: userCredential.user.uid,
           };

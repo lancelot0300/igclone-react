@@ -3,12 +3,16 @@ import { FC, useEffect, useState } from "react";
 import {  db } from "../../config/config";
 import { IData, IPost } from "../../interfaces/interfaces";
 import { Post } from "../../components/Post/Post";
-import { useSelector } from "react-redux";
-import { RootState } from "../../state/store";
+
+
+const renderPosts = (posts : IData[]) => {
+    if (posts) {
+      return posts.map((post) => <Post key={post.id} data={post} />);
+    }
+  };
 
 export const Home: FC = () => {
   const [posts, setPosts] = useState<IData[]>([]);
-  const { user } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     async function getUser() {
@@ -31,16 +35,12 @@ export const Home: FC = () => {
     getUser();
   }, []);
 
-  const renderPosts = () => {
-    if (posts) {
-      return posts.map((post) => <Post key={post.id} data={post} />);
-    }
-  };
+
 
   return (
     <>
-      {console.log(user)}
-      {renderPosts()}
+      {renderPosts(posts)}
     </>
   );
 };
+

@@ -3,12 +3,13 @@ import { StyledButton } from "./Button.styles";
 
 
 interface ButtonProps {
-  type: string,
+  type?: string,
   children: string
-  disabled: boolean;
+  disabled?: boolean;
+  onClick?: () => void;
 }
 
 
-export const Button: FC<ButtonProps> = ({children, disabled}) => {
-  return <StyledButton disabled={disabled}>{children}</StyledButton>;
+export const Button: FC<ButtonProps> = ({children, disabled, onClick}) => {
+  return <StyledButton onClick={onClick} disabled={disabled}>{children}</StyledButton>;
 };

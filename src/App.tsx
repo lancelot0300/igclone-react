@@ -1,46 +1,70 @@
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import Menu from "./components/Menu/Menu";
 import { Home } from "./pages/home/Home";
 import { Login } from "./pages/login/Login";
 import { Register } from "./pages/register/Register";
+import { ProtectedRoute } from "./components/ProtectedRoute/ProtectedRoute";
 import { AppContainer, Container, GlobalStyle } from "./App.styles";
-import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./config/config";
-import { loginSuccess } from "./state/features/auth/authSlice";
-import { useAppDispatch } from "./state/store";
+import { loginFailure, loginSuccess} from "./state/features/auth/authSlice";
+import { RootState, useAppDispatch } from "./state/store";
+import { useSelector } from "react-redux";
+
 
 const App: FC = () => {
 
-  const dispatch = useAppDispatch();
+  const  dispatch = useAppDispatch();
+  const {user} = useSelector((state: RootState) => state.auth);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() =>{
-    const unlisten = onAuthStateChanged(auth, (user) => {
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         const { email, uid } = user;
-        dispatch(loginSuccess({ email, uid }));
+        dispatch(loginSuccess({isAuth: true, email, uid }));
+        setLoading(false);
+      } else {
+        dispatch(loginFailure());
+        setLoading(false);
       }
-  });
-    return () => {
-        unlisten();
-    }
- }, [dispatch]);
- 
+    });
+    return unsubscribe;
+  }, [dispatch]);
+
   
   return (
-    <AppContainer>
-      <GlobalStyle />
-      <Menu />
-      <Container>
-        <Routes>
-          <Route path="/login" element={<Login />}></Route>
-          <Route path="/register" element={<Register />}></Route>
-          <Route path="/" element={<Home />}></Route>
-        </Routes>
-      </Container>
-    </AppContainer>
+    <>
+      <AppContainer>
+        <GlobalStyle />
+        <Menu />
+        {loading ? (
+          <Container>Loading...</Container>
+        ) : (<Container>
+          <Routes>
+            <Route
+              path="/login"
+              element={
+                <ProtectedRoute isAllowed={!user.isAuth} redirectPath="/">
+                  <Login />
+                </ProtectedRoute>
+              }
+            ></Route>
+            <Route path="/register" element={<Register />}></Route>
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute isAllowed={user.isAuth} redirectPath="/login">
+                  <Home />
+                </ProtectedRoute>
+              }
+            ></Route>
+          </Routes>
+        </Container>
+        )}
+      </AppContainer>
+    </>
   );
 };
 
 export default App;
-

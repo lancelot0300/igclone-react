@@ -12,6 +12,7 @@ export interface ILoginFormValues {
   password: string;
 }
 export interface IUser {
+  isAuth: boolean;
   uid: string;
   email: string | null;
 }
