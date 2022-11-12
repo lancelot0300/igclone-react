@@ -7,14 +7,12 @@ interface FormProps {
   title: string;
 }
 
-export const Form: FC<FormProps> = ({ children, onSubmit,title }) => {
+export const Form: FC<FormProps> = ({ children, onSubmit, title }) => {
   return (
     <FormContainer>
       <FormStyled onSubmit={onSubmit}>
-        <>
-          <StyledTitle>{title}</StyledTitle>
-          {children}
-        </>
+        <StyledTitle>{title}</StyledTitle>
+        {children}
       </FormStyled>
     </FormContainer>
   );

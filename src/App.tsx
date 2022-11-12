@@ -1,9 +1,9 @@
 import { FC, useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import Menu from "./components/Menu/Menu";
-import { Home } from "./pages/home/Home";
-import { Login } from "./pages/login/Login";
-import { Register } from "./pages/register/Register";
+import { Home } from "./pages/Home/Home";
+import { Login } from "./pages/Login/Login";
+import { Register } from "./pages/Register/Register";
 import { ProtectedRoute } from "./components/ProtectedRoute/ProtectedRoute";
 import { AppContainer, Container, GlobalStyle } from "./App.styles";
 import { auth } from "./config/config";
