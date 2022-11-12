@@ -7,22 +7,31 @@ import { Register } from "./pages/register/Register";
 import { ProtectedRoute } from "./components/ProtectedRoute/ProtectedRoute";
 import { AppContainer, Container, GlobalStyle } from "./App.styles";
 import { auth } from "./config/config";
-import { loginFailure, loginSuccess} from "./state/features/auth/authSlice";
+import {
+  initialState,
+  loginFailure,
+  loginSuccess,
+} from "./state/features/auth/authSlice";
 import { RootState, useAppDispatch } from "./state/store";
 import { useSelector } from "react-redux";
 
-
 const App: FC = () => {
-
-  const  dispatch = useAppDispatch();
-  const {user} = useSelector((state: RootState) => state.auth);
+  const dispatch = useAppDispatch();
+  const { user } = useSelector((state: RootState) => state.auth);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        const { email, uid } = user;
-        dispatch(loginSuccess({isAuth: true, email, uid }));
+        const { email, uid, photoURL } = user;
+        dispatch(
+          loginSuccess({
+            isAuth: true,
+            email,
+            uid,
+            avatar: photoURL || initialState.user.avatar,
+          })
+        );
         setLoading(false);
       } else {
         dispatch(loginFailure());
@@ -32,7 +41,6 @@ const App: FC = () => {
     return unsubscribe;
   }, [dispatch]);
 
-  
   return (
     <>
       <AppContainer>
@@ -40,27 +48,28 @@ const App: FC = () => {
         <Menu />
         {loading ? (
           <Container>Loading...</Container>
-        ) : (<Container>
-          <Routes>
-            <Route
-              path="/login"
-              element={
-                <ProtectedRoute isAllowed={!user.isAuth} redirectPath="/">
-                  <Login />
-                </ProtectedRoute>
-              }
-            ></Route>
-            <Route path="/register" element={<Register />}></Route>
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute isAllowed={user.isAuth} redirectPath="/login">
-                  <Home />
-                </ProtectedRoute>
-              }
-            ></Route>
-          </Routes>
-        </Container>
+        ) : (
+          <Container>
+            <Routes>
+              <Route
+                path="/login"
+                element={
+                  <ProtectedRoute isAllowed={!user.isAuth} redirectPath="/">
+                    <Login />
+                  </ProtectedRoute>
+                }
+              ></Route>
+              <Route path="/register" element={<Register />}></Route>
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute isAllowed={user.isAuth} redirectPath="/login">
+                    <Home />
+                  </ProtectedRoute>
+                }
+              ></Route>
+            </Routes>
+          </Container>
         )}
       </AppContainer>
     </>
