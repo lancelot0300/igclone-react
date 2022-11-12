@@ -1,28 +1,14 @@
-import { FC } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../state/features/auth/authSlice";
-import { RootState } from "../../state/store";
-import { Button } from "../Button/Button";
-import { MenuContainer, MenuLink } from "./MenuContainer.styles";
+import { FC} from "react";
+import { MenuContainer, MenuLink } from "./Menu.styles";
+import { MenuProfile } from "./MenuProfile/MenuProfile";
 
 const Menu: FC = () => {
-  const { user } = useSelector((state: RootState) => state.auth);
-  const dispatch = useDispatch();
+
   return (
     <>
       <MenuContainer>
         <MenuLink to="/">Home</MenuLink>
-        {user.isAuth ? (
-          <Button
-            onClick={() => {
-              dispatch(logout());
-            }}
-          >
-            Log out
-          </Button>
-        ) : (
-          <MenuLink to="/login">Login</MenuLink>
-        )}
+        <MenuProfile />
       </MenuContainer>
     </>
   );

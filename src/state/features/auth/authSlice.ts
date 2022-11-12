@@ -10,11 +10,12 @@ interface IInitialState {
 
 
 
-const initialState: IInitialState = {
+export const initialState: IInitialState = {
   user: {
     isAuth: false,
     uid: "",
     email: null,
+    avatar: "https://i0.wp.com/www.mnleadership.org/wp-content/uploads/2017/02/Anonymous-Avatar.png?ssl=1",
   },
 };
 

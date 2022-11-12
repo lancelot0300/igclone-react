@@ -7,11 +7,9 @@ export interface IPost {
   body: string;
   userId: string;
 }
-export interface ILoginFormValues {
-  login: string;
-  password: string;
-}
+
 export interface IUser {
+  avatar: string | undefined;
   isAuth: boolean;
   uid: string;
   email: string | null;

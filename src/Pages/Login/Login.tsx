@@ -6,9 +6,11 @@ import { FormLink, StyledMessage } from "../../components/Form/Form.style";
 import { Input } from "../../components/Input/Input";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { ILoginFormValues } from "../../interfaces/interfaces";
-import {  useAppDispatch } from "../../state/store";
-import { loginSuccess } from "../../state/features/auth/authSlice";
+import { useAppDispatch } from "../../state/store";
+import {
+  initialState,
+  loginSuccess,
+} from "../../state/features/auth/authSlice";
 import {
   browserLocalPersistence,
   setPersistence,
@@ -16,6 +18,11 @@ import {
 } from "firebase/auth";
 import { auth } from "../../config/config";
 import { useNavigate } from "react-router-dom";
+
+interface ILoginFormValues {
+  login: string;
+  password: string;
+}
 
 export const Login: FC = () => {
   const [loading, setLoading] = useState(false);
@@ -38,14 +45,14 @@ export const Login: FC = () => {
 
   const onSubmit: SubmitHandler<ILoginFormValues> = async (data) => {
     setLoading(true);
-    setPersistence(auth, browserLocalPersistence)
-    .then(() => {
+    setPersistence(auth, browserLocalPersistence).then(() => {
       return signInWithEmailAndPassword(auth, data.login, data.password)
         .then((userCredential) => {
           const user = {
-            isAuth: !!userCredential,
-            email: userCredential.user.email || "",
+            isAuth: true,
+            email: userCredential.user.email || initialState.user.email,
             uid: userCredential.user.uid,
+            avatar: userCredential.user.photoURL || initialState.user.avatar,
           };
           dispatch(loginSuccess(user));
           navigate("/");
