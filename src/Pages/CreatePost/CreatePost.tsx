@@ -22,9 +22,8 @@ const CreatePost = () => {
   const navigate = useNavigate();
 
     const schema = yup.object().shape({
-    title: yup.string().required("Title is required"),
     desc: yup.string(),
-    photo: yup.mixed(),
+    photo: yup.mixed().required("Photo is required"),
   });
 
   interface FormValues {
@@ -48,17 +47,18 @@ const CreatePost = () => {
       setWait(true);
       const url = await uploadFile(data.photo, user.uid);
         const post: IPost = {
-        title: data.title,
+        userName: user.displayName || user.email || "",
         desc: data.desc,
         photo: url,
         userId: user.uid,
         createdAt: new Date().toISOString(),
+        userPhoto: user.photoURL || "",
         };
         const dbRef = collection(db, "posts");
         await addDoc(dbRef, post)
     } catch (error) {
       if (error instanceof Error) {
-        setError("title", { type: "custom", message: error.message });
+        setError("desc", { type: "custom", message: error.message });
       }
     }
     navigate("/");
@@ -78,13 +78,6 @@ const CreatePost = () => {
   return (
     <>
       <Form onSubmit={handleSubmit(onSubmit)} title="Create Post">
-        <Input
-          type="text"
-          placeholder="Type a title for your post"
-          name="title"
-          register={register}
-          error={errors.title?.message}
-        />
         <Input
           type="text"
           placeholder="Type a description for your post"

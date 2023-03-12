@@ -1,16 +1,16 @@
-import { ChangeEvent, useState } from 'react'
-import { useSelector } from 'react-redux';
+import { ChangeEvent, FC, useState } from 'react'
 import useUploadFile from '../../hooks/useUploadFile';
-import { RootState } from '../../state/store';
+import { IUser } from '../../interfaces/interfaces';
 import { Input } from '../Input/Input'
 import { InputWrapper, StyledChangeEmail} from './ChangeAvatar.styles'
 
-const ChangeEmail = ( ) => {
+interface IProps {
+  user: IUser;
+}
 
-
+const ChangeEmail:FC<IProps> = ( {user}) => {
 
   const { updateAvatar } = useUploadFile();
-  const { user } = useSelector((state: RootState) => state.auth);
   const [loading, setLoading] = useState(false);
     const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
         setLoading(true);

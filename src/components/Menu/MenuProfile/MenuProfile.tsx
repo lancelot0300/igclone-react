@@ -32,7 +32,7 @@ export const MenuProfile: FC<MenuProfileProps> = () => {
 
   return (
     <>
-      <MenuProfileImage ref={imgRef} src={user.avatar} alt="profile" onClick={() => setShowMenu((prev) => !prev)} />
+      <MenuProfileImage ref={imgRef} src={user.photoURL} alt="profile" onClick={() => setShowMenu((prev) => !prev)} />
 
       
       {showMenu &&

@@ -15,7 +15,7 @@ export const initialState: IInitialState = {
     isAuth: false,
     uid: "",
     email: null,
-    avatar: "https://i0.wp.com/www.mnleadership.org/wp-content/uploads/2017/02/Anonymous-Avatar.png?ssl=1",
+    photoURL: "https://i0.wp.com/www.mnleadership.org/wp-content/uploads/2017/02/Anonymous-Avatar.png?ssl=1",
   },
 };
 
@@ -34,7 +34,7 @@ export const initialState: IInitialState = {
       signOut(auth);
     },
     avatarChange: (state, action: PayloadAction<string>) => {
-      state.user.avatar = action.payload;
+      state.user.photoURL = action.payload;
     },
   },
 });

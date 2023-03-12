@@ -52,7 +52,7 @@ export const Login: FC = () => {
             isAuth: true,
             email: userCredential.user.email || initialState.user.email,
             uid: userCredential.user.uid,
-            avatar: userCredential.user.photoURL || initialState.user.avatar,
+            photoURL: userCredential.user.photoURL || initialState.user.photoURL,
           };
           dispatch(loginSuccess(user));
           navigate("/");

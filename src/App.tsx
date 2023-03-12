@@ -26,13 +26,14 @@ const App: FC = () => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
+        console.log(user);
         const { email, uid, photoURL } = user;
         dispatch(
           loginSuccess({
             isAuth: true,
             email,
             uid,
-            avatar: photoURL || initialState.user.avatar,
+            photoURL: photoURL || initialState.user.photoURL,
           })
         );
         setLoading(false);

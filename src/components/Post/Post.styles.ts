@@ -12,15 +12,39 @@ export const StyledPost = styled.div`
   object-fit: cover;
   object-position: center;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 
   @media (max-width: 768px) {
     width: 90vw;
   }
 `;
 
-export const StyledTitle = styled.p`
-  text-transform: capitalize;
-  font-size: 1.5rem;
-  font-weight: 700;
+export const StyledUser = styled.div`
+  width: 200px;
+  height: 50px;
+  display: flex;
+  align-items: center;
   margin-bottom: 10px;
+  gap: 10px;
+
+  img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  span {
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+`;
+export const StyledUserName = styled.span`
+  font-size: 1rem;
+  font-weight: 700;
 `;

@@ -13,11 +13,13 @@ const StyledImage = styled.img`
 interface IProps {
   src: string;
   alt: string;
+  width?: string;
+  height?: string;
 }
 
-const Image: FC<IProps> = ({ src, alt }) => {
+const Image: FC<IProps> = ({ src, alt, width, height }) => {
   return (
-      <StyledImage src={src} alt={alt} />
+      <StyledImage width={width} height={height} src={src} alt={alt} />
   );
 };
 
