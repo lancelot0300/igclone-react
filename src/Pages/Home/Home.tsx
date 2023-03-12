@@ -26,7 +26,13 @@ export const Home: FC = () => {
               data: doc.data() as IPost,
             });
           });
+          posts.sort((a, b) => {
+            return (
+              new Date(b.data.createdAt).getTime() - new Date(a.data.createdAt).getTime()
+            );
+          });
           setPosts(posts);
+          console.log(posts);
         })
         .catch((error) => {
           console.log("Error getting documents: ", error);

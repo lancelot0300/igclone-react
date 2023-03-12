@@ -1,6 +1,7 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { logout } from "../../../../state/features/auth/authSlice";
-import { useAppDispatch } from "../../../../state/store";
+import { RootState, useAppDispatch } from "../../../../state/store";
 import {
   MenuProfileDropdown,
   MenuProfileDropdownItem,
@@ -9,23 +10,34 @@ import {
 
 interface LoggedDropdownProps {
     dropdownRef: React.RefObject<HTMLDivElement>;
+    onClick: () => void;
 }
 
-export const LoggedDropdown: React.FC<LoggedDropdownProps> = ({ dropdownRef }) => {
+export const LoggedDropdown: React.FC<LoggedDropdownProps> = ({ dropdownRef, onClick }) => {
 
     const dispatch = useAppDispatch();
+    const { user } = useSelector((state: RootState) => state.auth);
 
-    
+    const handleLogoutClick = () => {
+        dispatch(logout());
+    };
+
     return (
         <MenuProfileDropdown ref={dropdownRef}>
-            <MenuProfileDropdownStyledLink to="/profile">
-                <MenuProfileDropdownItem>Profile</MenuProfileDropdownItem>
+            <MenuProfileDropdownStyledLink to="/">
+                <MenuProfileDropdownItem onClick={onClick}>Home</MenuProfileDropdownItem>
+            </MenuProfileDropdownStyledLink>
+            <MenuProfileDropdownStyledLink to={`/create-post`}>
+                <MenuProfileDropdownItem onClick={onClick}>Create Post</MenuProfileDropdownItem>
+            </MenuProfileDropdownStyledLink>
+            <MenuProfileDropdownStyledLink to={`/profile/${user.uid}`}>
+                <MenuProfileDropdownItem onClick={onClick}>Profile</MenuProfileDropdownItem>
             </MenuProfileDropdownStyledLink>
             <MenuProfileDropdownStyledLink to="/settings">
-                <MenuProfileDropdownItem>Settings</MenuProfileDropdownItem>
+                <MenuProfileDropdownItem onClick={onClick}>Settings</MenuProfileDropdownItem>
             </MenuProfileDropdownStyledLink>
             <MenuProfileDropdownStyledLink to="/login">
-                <MenuProfileDropdownItem onClick={() => dispatch(logout())}>Logout</MenuProfileDropdownItem>
+                <MenuProfileDropdownItem onClick={handleLogoutClick}>Logout</MenuProfileDropdownItem>
             </MenuProfileDropdownStyledLink>
         </MenuProfileDropdown>
     );

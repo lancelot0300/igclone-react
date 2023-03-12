@@ -88,11 +88,13 @@ export const Login: FC = () => {
     <>
       <Form onSubmit={handleSubmit(onSubmit)} title="Login">
         <Input
-          type="login"
+          type="email"
           placeholder="Email"
           name="login"
           register={register}
           error={errors.login?.message}
+          autocomplete="email username"
+          
         />
         <Input
           type="password"
@@ -100,6 +102,7 @@ export const Login: FC = () => {
           name="password"
           register={register}
           error={errors.password?.message}
+          autocomplete="current-password"
         />
         <Button disabled={loading} type="submit">
           Log in

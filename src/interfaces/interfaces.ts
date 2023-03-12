@@ -4,8 +4,10 @@ export interface IData {
 }
 export interface IPost {
   title: string;
-  body: string;
+  desc: string;
   userId: string;
+  photo: string;
+  createdAt: string;
 }
 
 export interface IUser {

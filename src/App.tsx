@@ -1,9 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import Menu from "./components/Menu/Menu";
-import { Home } from "./pages/Home/Home";
-import { Login } from "./pages/Login/Login";
-import { Register } from "./pages/Register/Register";
 import { ProtectedRoute } from "./components/ProtectedRoute/ProtectedRoute";
 import { AppContainer, Container, GlobalStyle } from "./App.styles";
 import { auth } from "./config/config";
@@ -14,6 +11,12 @@ import {
 } from "./state/features/auth/authSlice";
 import { RootState, useAppDispatch } from "./state/store";
 import { useSelector } from "react-redux";
+import { Login } from "./Pages/Login/Login";
+import { Register } from "./Pages/Register/Register";
+import { Home } from "./Pages/Home/Home";
+import Profile from "./Pages/Profile/Profile";
+import Settings from "./Pages/Settings/Settings";
+import CreatePost from "./Pages/CreatePost/CreatePost";
 
 const App: FC = () => {
   const dispatch = useAppDispatch();
@@ -45,31 +48,70 @@ const App: FC = () => {
     <>
       <AppContainer>
         <GlobalStyle />
-        <Menu />
+
         {loading ? (
           <Container>Loading...</Container>
         ) : (
-          <Container>
-            <Routes>
-              <Route
-                path="/login"
-                element={
-                  <ProtectedRoute isAllowed={!user.isAuth} redirectPath="/">
-                    <Login />
-                  </ProtectedRoute>
-                }
-              ></Route>
-              <Route path="/register" element={<Register />}></Route>
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute isAllowed={user.isAuth} redirectPath="/login">
-                    <Home />
-                  </ProtectedRoute>
-                }
-              ></Route>
-            </Routes>
-          </Container>
+          <>
+            <Menu />
+            <Container>
+              <Routes>
+                <Route
+                  path="/login"
+                  element={
+                    <ProtectedRoute isAllowed={!user.isAuth} redirectPath="/">
+                      <Login />
+                    </ProtectedRoute>
+                  }
+                ></Route>
+                <Route path="/register" element={<Register />}></Route>
+                <Route
+                  path="/"
+                  element={
+                    <ProtectedRoute
+                      isAllowed={user.isAuth}
+                      redirectPath="/login"
+                    >
+                      <Home />
+                    </ProtectedRoute>
+                  }
+                ></Route>
+                <Route
+                  path="/profile/:id"
+                  element={
+                    <ProtectedRoute
+                      isAllowed={user.isAuth}
+                      redirectPath="/login"
+                    >
+                      <Profile></Profile>
+                    </ProtectedRoute>
+                  }
+                ></Route>
+                <Route
+                  path="/settings"
+                  element={
+                    <ProtectedRoute
+                      isAllowed={user.isAuth}
+                      redirectPath="/login"
+                    >
+                      <Settings></Settings>
+                    </ProtectedRoute>
+                  }
+                ></Route>
+                <Route
+                  path="/create-post"
+                  element={
+                    <ProtectedRoute
+                      isAllowed={user.isAuth}
+                      redirectPath="/login"
+                    >
+                      <CreatePost></CreatePost>
+                    </ProtectedRoute>
+                  }
+                ></Route>
+              </Routes>
+            </Container>
+          </>
         )}
       </AppContainer>
     </>

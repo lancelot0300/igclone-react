@@ -42,7 +42,7 @@ export const Register: FC = () => {
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
       setWait(true);
-      const user = await createUserWithEmailAndPassword(
+       await createUserWithEmailAndPassword(
         auth,
         data.login,
         data.password
@@ -58,7 +58,7 @@ export const Register: FC = () => {
   return (
     <Form onSubmit={handleSubmit(onSubmit)} title="Register">
       <Input
-        type="login"
+        type="email"
         placeholder="Email"
         name="login"
         register={register}
@@ -70,6 +70,7 @@ export const Register: FC = () => {
         name="password"
         register={register}
         error={errors.password?.message}
+        autocomplete="off"
       />
       <Input
         type="password"
@@ -77,6 +78,7 @@ export const Register: FC = () => {
         name="confirmPassword"
         register={register}
         error={errors.confirmPassword?.message}
+        autocomplete="off"
       />
       <Button disabled={wait} type="submit">
         Register

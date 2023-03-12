@@ -1,0 +1,39 @@
+import { ChangeEvent, useState } from 'react'
+import { useSelector } from 'react-redux';
+import useUploadFile from '../../hooks/useUploadFile';
+import { RootState } from '../../state/store';
+import { Input } from '../Input/Input'
+import { InputWrapper, StyledChangeEmail} from './ChangeAvatar.styles'
+
+const ChangeEmail = ( ) => {
+
+
+
+  const { updateAvatar } = useUploadFile();
+  const { user } = useSelector((state: RootState) => state.auth);
+  const [loading, setLoading] = useState(false);
+    const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
+        setLoading(true);
+        if (!e.target.files) return;
+        await updateAvatar(e.target.files[0], user.uid);
+        setLoading(false);
+      };
+
+  return (
+    <StyledChangeEmail>
+        <p>Change Avatar:</p>
+        <InputWrapper>
+          <span>Click or Drop File</span>
+          <Input
+                  onChange={handleChange}
+                  type="file"
+                  name="avatar"
+                  accept="image/*"
+                  disabled={loading}
+         />
+        </InputWrapper>
+      </StyledChangeEmail>
+  )
+}
+
+export default ChangeEmail

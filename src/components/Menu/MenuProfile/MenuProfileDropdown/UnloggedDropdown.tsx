@@ -2,16 +2,17 @@ import { MenuProfileDropdown, MenuProfileDropdownItem, MenuProfileDropdownStyled
 
 interface UnloggedDropdownProps {
     dropdownRef: React.RefObject<HTMLDivElement>;
+    onClick: () => void;
 }
 
-export const UnloggedDropdown: React.FC<UnloggedDropdownProps> = ({ dropdownRef }) => {
+export const UnloggedDropdown: React.FC<UnloggedDropdownProps> = ({ dropdownRef, onClick }) => {
     return (
         <MenuProfileDropdown ref={dropdownRef}>
             <MenuProfileDropdownStyledLink to="/login">
-                <MenuProfileDropdownItem>Login</MenuProfileDropdownItem>
+                <MenuProfileDropdownItem onClick={onClick}>Login</MenuProfileDropdownItem>
             </MenuProfileDropdownStyledLink>
             <MenuProfileDropdownStyledLink to="/register">
-                <MenuProfileDropdownItem>Register</MenuProfileDropdownItem>
+                <MenuProfileDropdownItem onClick={onClick}>Register</MenuProfileDropdownItem>
             </MenuProfileDropdownStyledLink>
         </MenuProfileDropdown>
     );

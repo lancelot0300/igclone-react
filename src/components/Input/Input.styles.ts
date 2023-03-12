@@ -9,10 +9,12 @@ export const StyledInput = styled.input`
   background-color: #ebecf0;
   text-shadow: 1px 1px 0 #fff;
   width:100%
+  z-index: 0;
 `;
 export const StyledLabel = styled.label`
   font-size:0.8rem;
   line-height:0.5rem;
   color:red;
-  
+  z-index: 0;
 `
+

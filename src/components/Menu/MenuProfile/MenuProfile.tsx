@@ -1,7 +1,7 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../state/store";
-import { MenuProfileContainer, MenuProfileImage } from "../Menu.styles";
+import { MenuProfileImage } from "../Menu.styles";
 import { LoggedDropdown } from "./MenuProfileDropdown/LoggedDropdown";
 import { UnloggedDropdown } from "./MenuProfileDropdown/UnloggedDropdown";
 
@@ -21,8 +21,8 @@ export const MenuProfile: FC<MenuProfileProps> = () => {
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)
       ) {
-        setShowMenu(false);
-      }
+        setShowMenu((toggle) => !toggle);
+      } 
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -31,14 +31,16 @@ export const MenuProfile: FC<MenuProfileProps> = () => {
   }, [dropdownRef]);
 
   return (
-    <MenuProfileContainer onClick={() => setShowMenu((prev) => !prev)}>
-      <MenuProfileImage ref={imgRef} src={user.avatar} alt="profile" />
+    <>
+      <MenuProfileImage ref={imgRef} src={user.avatar} alt="profile" onClick={() => setShowMenu((prev) => !prev)} />
+
+      
       {showMenu &&
         (user.isAuth ? (
-          <LoggedDropdown dropdownRef={dropdownRef} />
+          <LoggedDropdown dropdownRef={dropdownRef} onClick={() => setShowMenu((prev) => !prev)} />
         ) : (
-          <UnloggedDropdown dropdownRef={dropdownRef} />
+          <UnloggedDropdown dropdownRef={dropdownRef} onClick={() => setShowMenu((prev) => !prev)} />
         ))}
-    </MenuProfileContainer>
+    </>
   );
 };

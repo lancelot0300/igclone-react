@@ -2,15 +2,19 @@ import styled from "styled-components";
 
 export const StyledPost = styled.div`
   background-color: red;
-  width: 85%;
   margin: 50px auto;
-  max-height: 800px;
+  max-width: 600px;
+  width: 50vw;
   border-radius: 10px;
   padding: 10px;
   background-color: #c0c0c0;
   color: #000;
-  @media (min-width: 640px) {
-    width: 540px;
+  object-fit: cover;
+  object-position: center;
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    width: 90vw;
   }
 `;
 

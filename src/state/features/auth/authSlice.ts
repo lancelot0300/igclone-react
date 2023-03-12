@@ -25,7 +25,6 @@ export const initialState: IInitialState = {
   reducers: {
     loginSuccess: (state, action: PayloadAction<IUser>) => {
       state.user = action.payload;
-    
     },
     loginFailure: (state) => {
       state.user = initialState.user;
@@ -34,11 +33,14 @@ export const initialState: IInitialState = {
       state.user = initialState.user;
       signOut(auth);
     },
+    avatarChange: (state, action: PayloadAction<string>) => {
+      state.user.avatar = action.payload;
+    },
   },
 });
 
 
 
 export default authSlice.reducer;
-export const { loginSuccess, loginFailure, logout } = authSlice.actions;
+export const { loginSuccess, loginFailure, logout, avatarChange } = authSlice.actions;
 

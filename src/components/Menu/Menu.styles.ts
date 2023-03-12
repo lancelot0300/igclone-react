@@ -12,6 +12,7 @@ export const MenuContainer = styled.nav`
   justify-content: space-between;
   padding: 20px;
   background-color: rgb(27 43 82);
+  z-index: 100;
 `;
 export const MenuLink = styled(Link)`
   color: white;
@@ -24,16 +25,13 @@ export const MenuLink = styled(Link)`
   }
 
 `;
-export const MenuProfileContainer = styled.div`
-  display: flex;
-  overflow: hidden;
-  width: 40px;
-  border-radius: 50%;
-  background-color: #fff;
-  cursor: pointer;
-`;
 export const MenuProfileImage = styled.img`
-  width: 40px;
+  border: 0;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
 `;
 export const MenuProfileName = styled.div`
   display: none;
@@ -53,7 +51,6 @@ export const MenuProfileDropdown = styled.div`
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 10px 20px -10px #5e5df0;
-  z-index: 100;
 
   &:after {
     position: absolute;
