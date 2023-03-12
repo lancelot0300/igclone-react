@@ -1,8 +1,7 @@
-import { FC, useEffect} from "react";
+import { FC} from "react";
 import { IData } from "../../interfaces/interfaces";
 import { StyledPost, StyledUser, StyledUserName } from "./Post.styles";
 import Image from "../Image/Image";
-import { collection } from "firebase/firestore";
 
 
 interface IProps {

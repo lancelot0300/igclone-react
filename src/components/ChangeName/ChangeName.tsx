@@ -1,5 +1,5 @@
-import { getAuth, updateProfile } from "firebase/auth";
-import React, { FC, useRef } from "react";
+import { updateProfile } from "firebase/auth";
+import { FC, useRef } from "react";
 import styled from "styled-components";
 import { auth } from "../../config/config";
 import { IUser } from "../../interfaces/interfaces";
