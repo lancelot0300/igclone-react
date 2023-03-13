@@ -7,22 +7,19 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { InputWrapper } from "../../components/ChangeAvatar/ChangeAvatar.styles";
 import { IPost } from "../../interfaces/interfaces";
-import useUploadFile from "../../hooks/useUploadFile";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store";
-import { addDoc, collection } from "firebase/firestore";
-import { db } from "../../config/config";
 import { useNavigate } from "react-router-dom";
+import useFirebase from "../../hooks/useFirebase";
 
 const CreatePost = () => {
   const [wait, setWait] = useState(false);
   const [photo, setPhoto] = useState<File | null>(null);
-  const { uploadFile } = useUploadFile();
+  const { uploadFile, uploadDoc } = useFirebase();
   const { user } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
 
   const MAX_FILE_SIZE = 102400; //1MB
-
   const validFileExtensions  = ["jpg", "gif", "png", "jpeg", "svg", "webp"];
 
   const isValidFileType = (fileName : string, fileType :string) => {
@@ -68,8 +65,7 @@ const CreatePost = () => {
         createdAt: new Date().toISOString(),
         userPhoto: user.photoURL || "",
       };
-      const dbRef = collection(db, "posts");
-      await addDoc(dbRef, post);
+      uploadDoc("/posts", post);
     } catch (error) {
       if (error instanceof Error) {
         setError("desc", { type: "custom", message: error.message });
