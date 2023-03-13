@@ -1,5 +1,5 @@
 import { ChangeEvent, FC, useState } from 'react'
-import useUploadFile from '../../hooks/useUploadFile';
+import useFirebase from '../../hooks/useFirebase';
 import { IUser } from '../../interfaces/interfaces';
 import { Input } from '../Input/Input'
 import { InputWrapper, StyledChangeEmail} from './ChangeAvatar.styles'
@@ -10,7 +10,7 @@ interface IProps {
 
 const ChangeEmail:FC<IProps> = ( {user}) => {
 
-  const { updateAvatar } = useUploadFile();
+  const { updateAvatar } = useFirebase();
   const [loading, setLoading] = useState(false);
     const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
         setLoading(true);
