@@ -8,10 +8,11 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { auth } from "../../config/config";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 export const Register: FC = () => {
   const [wait, setWait] = useState(false);
-
+  const navigate = useNavigate();
   const schema = yup.object().shape({
     login: yup.string().email("Invalid email format").required("Required"),
     password: yup
@@ -50,8 +51,10 @@ export const Register: FC = () => {
     } catch (error) {
       if (error instanceof Error) {
         setError("login", { type: "custom", message: error.message });
+        navigate("/register");
       }
     }
+    navigate("/");
     setWait(false);
   };
 

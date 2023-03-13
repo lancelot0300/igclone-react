@@ -65,7 +65,14 @@ const App: FC = () => {
                     </ProtectedRoute>
                   }
                 ></Route>
-                <Route path="/register" element={<Register />}></Route>
+               <Route
+                  path="/register"
+                  element={
+                    <ProtectedRoute isAllowed={!user.isAuth} redirectPath="/">
+                      <Register />
+                    </ProtectedRoute>
+                  }
+                ></Route>
                 <Route
                   path="/"
                   element={

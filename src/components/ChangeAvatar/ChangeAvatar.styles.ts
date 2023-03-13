@@ -25,7 +25,7 @@ export const InputWrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 20%;
+    flex-direction: column;
     position: relative;
     
     ${StyledInput} {
@@ -49,5 +49,15 @@ export const InputWrapper = styled.div`
         left: 0;
         background-color: #1c1c1c;
     }
-    `;
+    label {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        flex-shrink: 0;
+        padding-bottom: 0.5rem;
+    }
+        
+`;
 

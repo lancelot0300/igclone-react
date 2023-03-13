@@ -17,13 +17,27 @@ import { useNavigate } from "react-router-dom";
 const CreatePost = () => {
   const [wait, setWait] = useState(false);
   const [photo, setPhoto] = useState<File | null>(null);
-  const {uploadFile} = useUploadFile();
-  const {user } = useSelector((state: RootState) => state.auth);
+  const { uploadFile } = useUploadFile();
+  const { user } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
 
-    const schema = yup.object().shape({
+  const MAX_FILE_SIZE = 102400; //1MB
+
+  const validFileExtensions  = ["jpg", "gif", "png", "jpeg", "svg", "webp"];
+
+  const isValidFileType = (fileName : string, fileType :string) => {
+    const extension = fileName.split(".").pop();
+    return extension && validFileExtensions.includes(extension) && fileType === "image";
+  }
+
+  const schema = yup.object().shape({
     desc: yup.string(),
-    photo: yup.mixed().required("Photo is required"),
+    photo: yup.mixed()
+    .required("Photo is required")
+    .test("is-valid-type", "Not a valid image type",
+      value => value && isValidFileType(value.name, value.type))
+    .test("is-valid-size", "Max allowed size is 1MB",
+      value => value && value.size <= MAX_FILE_SIZE),
   });
 
   interface FormValues {
@@ -46,16 +60,16 @@ const CreatePost = () => {
     try {
       setWait(true);
       const url = await uploadFile(data.photo, user.uid);
-        const post: IPost = {
+      const post: IPost = {
         userName: user.displayName || user.email || "",
         desc: data.desc,
         photo: url,
         userId: user.uid,
         createdAt: new Date().toISOString(),
         userPhoto: user.photoURL || "",
-        };
-        const dbRef = collection(db, "posts");
-        await addDoc(dbRef, post)
+      };
+      const dbRef = collection(db, "posts");
+      await addDoc(dbRef, post);
     } catch (error) {
       if (error instanceof Error) {
         setError("desc", { type: "custom", message: error.message });
@@ -65,15 +79,13 @@ const CreatePost = () => {
     setWait(false);
   };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-        setPhoto(file);
-        setValue("photo", file);
-        }
-    };
-
-
+      setPhoto(file);
+      setValue("photo", file);
+    }
+  };
 
   return (
     <>
@@ -85,7 +97,14 @@ const CreatePost = () => {
           register={register}
           error={errors.desc?.message}
         />
-        {photo && <img width="100px" height="100px" src={URL.createObjectURL(photo)} alt="preview" />}
+        {photo && (
+          <img
+            width="100px"
+            height="100px"
+            src={URL.createObjectURL(photo)}
+            alt="Preview"
+          />
+        )}
         <InputWrapper>
           <span>Click or Drop File</span>
           <Input
