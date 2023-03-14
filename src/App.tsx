@@ -26,7 +26,6 @@ const App: FC = () => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        console.log(user);
         const { email, uid, photoURL } = user;
         dispatch(
           loginSuccess({

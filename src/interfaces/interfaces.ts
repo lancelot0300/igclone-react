@@ -9,6 +9,11 @@ export interface IPost {
   userName: string;
   photo: string;
   createdAt: string;
+  likes?: ILike[];
+}
+
+export interface ILike {
+  userId: string;
 }
 
 export interface IUser {
