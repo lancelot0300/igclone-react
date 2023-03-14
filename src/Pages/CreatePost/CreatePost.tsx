@@ -18,13 +18,13 @@ const CreatePost = () => {
   const { uploadFile, uploadDoc } = useFirebase();
   const { user } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
-
-  const MAX_FILE_SIZE = 102400; //1MB
-  const validFileExtensions  = ["jpg", "gif", "png", "jpeg", "svg", "webp"];
+  
+  const MAX_FILE_SIZE = 512000; //5MB
+  const validFileExtensions  = ["jpg", "gif", "png", "jpeg", "svg", "webp", "bmp", "heif", "heic"];
 
   const isValidFileType = (fileName : string, fileType :string) => {
     const extension = fileName.split(".").pop();
-    return extension && validFileExtensions.includes(extension) && fileType === "image";
+    return validFileExtensions.includes(extension || "") && fileType.startsWith("image/");
   }
 
   const schema = yup.object().shape({
@@ -83,6 +83,28 @@ const CreatePost = () => {
     }
   };
 
+  const showPreview = (file: File) => {
+   
+    if(isValidFileType(file.name, file.type))
+    {
+      return (
+        <img
+            width="100px"
+            height="100px"
+            src={URL.createObjectURL(file)}
+            alt="Preview"
+          />
+      );
+    }
+    else
+    {
+      return (
+        <p>Invalid file type</p>
+      );
+    }
+
+  }
+
   return (
     <>
       <Form onSubmit={handleSubmit(onSubmit)} title="Create Post">
@@ -93,14 +115,7 @@ const CreatePost = () => {
           register={register}
           error={errors.desc?.message}
         />
-        {photo && (
-          <img
-            width="100px"
-            height="100px"
-            src={URL.createObjectURL(photo)}
-            alt="Preview"
-          />
-        )}
+        {photo && showPreview(photo)}
         <InputWrapper>
           <span>Click or Drop File</span>
           <Input
