@@ -79,8 +79,6 @@ const CreatePost = () => {
     const file = e.target.files?.[0];
     if (file) {
       setPhoto(file);
-      console.log(file.size);
-      console.log(MAX_FILE_SIZE);
       setValue("photo", file);
     }
   };
