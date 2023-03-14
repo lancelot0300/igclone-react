@@ -19,7 +19,7 @@ const CreatePost = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
   
-  const MAX_FILE_SIZE =  5 * (1024*1024); //5MB
+  const MAX_FILE_SIZE =  5242880; //5MB
   const validFileExtensions  = ["jpg", "gif", "png", "jpeg", "svg", "webp", "bmp", "heif", "heic"];
 
   const isValidFileType = (fileName : string, fileType :string) => {
@@ -33,7 +33,7 @@ const CreatePost = () => {
     .required("Photo is required")
     .test("is-valid-type", "Not a valid image type",
       value => value && isValidFileType(value.name, value.type))
-    .test("is-valid-size", "Max allowed size is 1MB",
+    .test("is-valid-size", `Max allowed size is ${MAX_FILE_SIZE / (1024* 1024)}MB`,
       value => value && value.size <= MAX_FILE_SIZE),
   });
 
@@ -79,7 +79,8 @@ const CreatePost = () => {
     const file = e.target.files?.[0];
     if (file) {
       setPhoto(file);
-      console.log(file);
+      console.log(file.size);
+      console.log(MAX_FILE_SIZE);
       setValue("photo", file);
     }
   };
@@ -89,12 +90,16 @@ const CreatePost = () => {
     if(isValidFileType(file.name, file.type))
     {
       return (
+        <>
         <img
             width="100px"
             height="100px"
             src={URL.createObjectURL(file)}
             alt="Preview"
           />
+          <p>{(file.size / (1024* 1024)).toFixed(1)}MB</p>
+        </>
+        
       );
     }
     else
