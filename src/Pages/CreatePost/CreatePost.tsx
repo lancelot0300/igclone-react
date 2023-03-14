@@ -19,7 +19,7 @@ const CreatePost = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
   
-  const MAX_FILE_SIZE = 512000; //5MB
+  const MAX_FILE_SIZE =  5 * (1024*1024); //5MB
   const validFileExtensions  = ["jpg", "gif", "png", "jpeg", "svg", "webp", "bmp", "heif", "heic"];
 
   const isValidFileType = (fileName : string, fileType :string) => {
@@ -79,6 +79,7 @@ const CreatePost = () => {
     const file = e.target.files?.[0];
     if (file) {
       setPhoto(file);
+      console.log(file);
       setValue("photo", file);
     }
   };
