@@ -16,6 +16,7 @@ const useUploadFile = () => {
       photoURL: url,
     });
     dispatch(avatarChange(url));
+    return url;
   };
 
   const uploadFile = async (photo: File, userId: string) => {
@@ -28,6 +29,7 @@ const useUploadFile = () => {
     const dbRef = collection(db, destination);
     await addDoc(dbRef, data);
   };
+  
 
   return { updateAvatar, uploadFile, uploadDoc };
 };
