@@ -1,7 +1,8 @@
 import { updateProfile } from "firebase/auth";
+import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { FC, useRef } from "react";
 import styled from "styled-components";
-import { auth } from "../../config/config";
+import { auth, db } from "../../config/config";
 import { IUser } from "../../interfaces/interfaces";
 import { Input } from "../Input/Input";
 
@@ -39,10 +40,21 @@ const ChangeName:FC<IProps> = ({user}) => {
     const handleChangeClick = async () => {
         if(!auth.currentUser) return;
         if(!inputRef.current?.value) return;
+
         await updateProfile(auth.currentUser, {
           displayName: inputRef.current?.value,
         })
-        console.log("Name changed");
+
+        const postsColl = collection(db, "posts");
+        const querySnapshot = await getDocs(postsColl);
+    
+        querySnapshot.forEach( async (document) => {
+          if (document.data().userId === user.uid) {
+            const postId = document.id;
+            const docRef = doc(db, "posts", postId);
+            await updateDoc(docRef, { userName: inputRef.current?.value});
+          }
+        });
     };
 
   return (

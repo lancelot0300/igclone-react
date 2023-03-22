@@ -1,33 +1,10 @@
-import { collection, getDocs } from "firebase/firestore";
-import { FC, useEffect, useState } from "react";
-import { db } from "../../config/config";
-import { IData, IPost } from "../../interfaces/interfaces";
+import { FC, useEffect} from "react";
+import { IData } from "../../interfaces/interfaces";
 import { Post } from "../../components/Post/Post";
+import usePosts from "../../hooks/usePosts";
 
 export const Home: FC = () => {
-  const [posts, setPosts] = useState<IData[]>([]);
-
-  const getPosts = async () => {
-    const postsColl = collection(db, "posts");
-    const querySnapshot = await getDocs(postsColl);
-    const posts: IData[] = [];
-    querySnapshot.forEach((doc) => {
-      posts.push({
-        id: doc.id,
-        data: doc.data() as IPost,
-      });
-    });
-    return posts;
-  };
-
-  const sortPosts = (posts: IData[]) => {
-    posts.sort((a, b) => {
-      return (
-        new Date(b.data.createdAt).getTime() -
-        new Date(a.data.createdAt).getTime()
-      );
-    });
-  };
+  const {posts, getPosts} = usePosts();
 
   const renderPosts = (posts: IData[]) => {
     if (posts) {
@@ -37,12 +14,10 @@ export const Home: FC = () => {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const posts = await getPosts();
-      sortPosts(posts);
-      setPosts(posts);
+      await getPosts();
     };
     fetchPosts();
-  }, []);
+  }, [getPosts]);
 
   return <>{renderPosts(posts)}</>;
 };

@@ -53,6 +53,7 @@ export const Login: FC = () => {
             email: userCredential.user.email || initialState.user.email,
             uid: userCredential.user.uid,
             photoURL: userCredential.user.photoURL || initialState.user.photoURL,
+            displayName: userCredential.user.displayName || initialState.user.displayName,
           };
           dispatch(loginSuccess(user));
           navigate("/");

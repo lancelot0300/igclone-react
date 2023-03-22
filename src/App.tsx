@@ -33,6 +33,7 @@ const App: FC = () => {
             email,
             uid,
             photoURL: photoURL || initialState.user.photoURL,
+            displayName: user.displayName || initialState.user.displayName,
           })
         );
         setLoading(false);

@@ -16,6 +16,7 @@ export const initialState: IInitialState = {
     uid: "",
     email: null,
     photoURL: "https://i0.wp.com/www.mnleadership.org/wp-content/uploads/2017/02/Anonymous-Avatar.png?ssl=1",
+    displayName: null,
   },
 };
 

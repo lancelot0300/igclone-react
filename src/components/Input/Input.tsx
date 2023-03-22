@@ -6,13 +6,14 @@ interface InputProps {
   type: string;
   placeholder?: string;
   error?: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined;
-  name: string;
+  name?: string;
   register?: Function;
   autocomplete?: string;
   onChange?: Function;
   accept?: string;
   disabled?: boolean;
   ref? : any;
+  multiple?: boolean;
 }
 
 export const Input: FC<InputProps> = forwardRef(({
@@ -25,10 +26,11 @@ export const Input: FC<InputProps> = forwardRef(({
   onChange,
   accept,
   disabled,
+  multiple
 }, ref) => {
   return (
     <>
-      <StyledInput disabled={disabled} placeholder={placeholder} autoComplete={autocomplete} type={type} ref={ref} onChange={onChange} accept={accept} { ...register && {...register(name)}} />
+      <StyledInput disabled={disabled} placeholder={placeholder} autoComplete={autocomplete} onChange={onChange} multiple={multiple} type={type} ref={ref} accept={accept} { ...register && {...register(name, {onChange})}} />
       {error && <StyledLabel>{error.toString()}</StyledLabel>}
     </>
   );

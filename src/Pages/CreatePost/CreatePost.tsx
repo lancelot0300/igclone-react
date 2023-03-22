@@ -32,21 +32,20 @@ const CreatePost = () => {
     photo: yup.mixed()
     .required("Photo is required")
     .test("is-valid-type", "Not a valid image type",
-      value => value && isValidFileType(value.name, value.type))
+      value => value && isValidFileType(value[0].name, value[0].type))
     .test("is-valid-size", `Max allowed size is ${MAX_FILE_SIZE / (1024* 1024)}MB`,
-      value => value && value.size <= MAX_FILE_SIZE),
+      value => value && value[0].size <= MAX_FILE_SIZE),
   });
 
   interface FormValues {
     title: string;
     desc: string;
-    photo: File;
+    photo: File[];
   }
 
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors },
     setError,
   } = useForm<FormValues>({
@@ -56,7 +55,7 @@ const CreatePost = () => {
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
       setWait(true);
-      const url = await uploadFile(data.photo, user.uid);
+      const url = await uploadFile(data.photo[0], user.uid);
       const post: IPost = {
         userName: user.displayName || user.email || "",
         desc: data.desc,
@@ -76,10 +75,8 @@ const CreatePost = () => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setPhoto(file);
-      setValue("photo", file);
+    if (e.target.files) {
+      setPhoto(e.target.files[0]);
     }
   };
 
@@ -95,7 +92,7 @@ const CreatePost = () => {
             src={URL.createObjectURL(file)}
             alt="Preview"
           />
-          <p>{(file.size / (1024* 1024)).toFixed(1)}MB</p>
+          <p>{(file.size / (1024* 1024)).toFixed(2)}MB</p>
         </>
         
       );
@@ -126,6 +123,8 @@ const CreatePost = () => {
             type="file"
             name="photo"
             accept="image/*"
+            multiple={false}
+            register={register}
             onChange={handleChange}
             error={errors.photo?.message}
           />
