@@ -1,23 +1,16 @@
 import { FC, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../../components/Button/Button";
 import { Form } from "../../components/Form/Form";
 import { FormLink, StyledMessage } from "../../components/Form/Form.style";
-import { Input } from "../../components/Input/Input";
 import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { useAppDispatch } from "../../state/store";
-import {
-  initialState,
-  loginSuccess,
-} from "../../state/features/auth/authSlice";
-import {
-  browserLocalPersistence,
-  setPersistence,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { auth } from "../../config/config";
+import {useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
+import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
+import { StyledInput } from "../../components/Input/Input.styles";
+import { auth } from "../../config/config";
+import { browserLocalPersistence, setPersistence, signInWithEmailAndPassword } from "firebase/auth";
+import { initialState, loginFailure, loginSuccess } from "../../state/features/auth/authSlice";
 
 interface ILoginFormValues {
   login: string;
@@ -26,85 +19,74 @@ interface ILoginFormValues {
 
 export const Login: FC = () => {
   const [loading, setLoading] = useState(false);
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
+  const dispatch = useAppDispatch()
   const schema = yup.object().shape({
-    login: yup.string().email("Invalid email format").required("Required"),
-    password: yup.string().required("Password is required"),
+    login: yup.string().email("Invalid email format").required("Login is required"),
+    password: yup.string().min(5).required("Password is required"),
   });
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setError,
-  } = useForm<ILoginFormValues>({
-    resolver: yupResolver(schema),
-  });
 
-  const onSubmit: SubmitHandler<ILoginFormValues> = async (data) => {
-    setLoading(true);
-    setPersistence(auth, browserLocalPersistence).then(() => {
-      return signInWithEmailAndPassword(auth, data.login, data.password)
-        .then((userCredential) => {
-          const user = {
-            isAuth: true,
-            email: userCredential.user.email || initialState.user.email,
-            uid: userCredential.user.uid,
-            photoURL: userCredential.user.photoURL || initialState.user.photoURL,
-            displayName: userCredential.user.displayName || initialState.user.displayName,
-          };
-          dispatch(loginSuccess(user));
-          navigate("/");
-        })
-        .catch((error) => {
-          switch (error.code) {
-            case "auth/user-not-found":
-              setError("login", {
-                type: "manual",
-                message: "User not found",
-              });
-              setLoading(false);
-              break;
-            case "auth/wrong-password":
-              setError("password", {
-                type: "manual",
-                message: "Wrong password",
-              });
-              setLoading(false);
-              break;
-            default:
-              setError("login", {
-                type: "manual",
-                message: error.message,
-              });
-              setLoading(false);
-          }
-        });
-    });
+
+  const onSubmit = async ({login, password} : ILoginFormValues) => {
+    setLoading(true)
+    await setPersistence(auth, browserLocalPersistence)
+
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      login,
+      password
+    ).catch(errors => {setErrors({password:errors.message})})
+
+    if (!userCredential) 
+    {
+      dispatch(loginFailure);
+      setLoading(false)
+      return;
+    };
+
+    const user = {
+      isAuth: true,
+      email: userCredential.user.email || initialState.user.email,
+      uid: userCredential.user.uid,
+      photoURL: userCredential.user.photoURL || initialState.user.photoURL,
+      displayName:
+        userCredential.user.displayName || initialState.user.displayName,
+    };
+    dispatch(loginSuccess(user))
+    navigate("/")
   };
+
+  const {values,errors,setErrors, handleChange, handleSubmit} = useFormik<ILoginFormValues>({initialValues: {
+    login: "",
+    password: "",
+  },
+  onSubmit,
+  validationSchema: schema,
+})
 
   return (
     <>
-      <Form onSubmit={handleSubmit(onSubmit)} title="Login">
-        <Input
+    
+      <Form onSubmit={handleSubmit} title="Login">
+        <StyledInput
           type="email"
           placeholder="Email"
           name="login"
-          register={register}
-          error={errors.login?.message}
           autocomplete="email username"
-          
+          value={values.login}
+          onChange={handleChange}
         />
-        <Input
+        <ErrorMessage $isError={ errors.login ? true : false}>{errors.login}</ErrorMessage>
+        <StyledInput
           type="password"
           placeholder="Password"
           name="password"
-          register={register}
-          error={errors.password?.message}
           autocomplete="current-password"
+          value={values.password}
+          onChange={handleChange}
         />
+        <ErrorMessage $isError={ errors.password ? true : false}>{errors.password}</ErrorMessage>
         <Button disabled={loading} type="submit">
           Log in
         </Button>

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-
+import  Image  from "../Image/Image"
 export const MenuContainer = styled.nav`
   position: sticky;
   top: 0;
@@ -25,7 +25,7 @@ export const MenuLink = styled(Link)`
   }
 
 `;
-export const MenuProfileImage = styled.img`
+export const MenuProfileImage = styled(Image)`
   border: 0;
   width: 50px;
   height: 50px;
@@ -44,8 +44,8 @@ export const MenuProfileName = styled.div`
 `;
 export const MenuProfileDropdown = styled.div`
   position: absolute;
-  top: 70px;
-  right: 20px;
+  top: 75px;
+  right: 25px;
   width: 200px;
   padding: 10px;
   background-color: #fff;

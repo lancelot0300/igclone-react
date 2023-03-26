@@ -1,26 +1,17 @@
-import { FC } from "react";
-import styled from "styled-components";
-
-const StyledImage = styled.img`
-  display: block;
-  width: 100%;
-  height: 100%;
-  max-height: 900px;
-  object-fit: cover;
-  object-position: center;
-`;
+import { forwardRef } from "react";
 
 interface IProps {
   src: string;
   alt: string;
-  width?: string;
-  height?: string;
+  width?: string | number;
+  height?: string | number;
+  className?: string;
+  onClick?: () => void;
 }
 
-const Image: FC<IProps> = ({ src, alt, width, height }) => {
-  return (
-      <StyledImage width={width} height={height} src={src} alt={alt} />
-  );
-};
+
+const Image = forwardRef<HTMLImageElement, IProps>(({src, alt, ...props}, ref,) => {
+  return <img src={src} alt={alt} { ...props} ref={ref}/>
+});
 
 export default Image;

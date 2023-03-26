@@ -1,40 +1,32 @@
 import { collection, getDocs } from "firebase/firestore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { db } from "../config/config";
 import { IData, IPost } from "../interfaces/interfaces";
 
 const usePosts = () => {
-    const [posts, setPosts] = useState<IData[]>([]);
+    const [postsState, setPostsState] = useState<IData[]>([]);
 
-    const getPosts = async () => {
-      const postsColl = collection(db, "posts");
-      const querySnapshot = await getDocs(postsColl);
-      const posts: IData[] = [];
-      querySnapshot.forEach((doc) => {
-        posts.push({
+      
+
+    useEffect(() => {
+      const getPosts = async () => {
+        const postsCol = collection(db, "posts");
+        const postsSnapshot = await getDocs(postsCol);
+        const postsList: IData[] = postsSnapshot.docs.map((doc) => ({
           id: doc.id,
           data: doc.data() as IPost,
-        });
-      });
-     sortPosts(posts);
-     setPosts(posts); 
-    };
+        }));
+        sortPosts(postsList);
+        setPostsState(postsList);
+      };
+      getPosts();
 
-    const getUserPosts = async (userId: string) => {
-        const postsColl = collection(db, "posts");
-        const querySnapshot = await getDocs(postsColl);
-        const posts: IData[] = [];
-        querySnapshot.forEach((doc) => {
-            if (doc.data().userId !== userId) return;
-            posts.push({
-                id: doc.id,
-                data: doc.data() as IPost,
-            });
-        });
-        sortPosts(posts);
-        setPosts(posts);
-    };
-  
+      return () => {
+        console.log( 'unmount');
+      }
+    }, []);
+
+
     const sortPosts = (posts: IData[]) => {
       posts.sort((a, b) => {
         return (
@@ -43,6 +35,13 @@ const usePosts = () => {
         );
       });
     };
-    return { posts, setPosts, getPosts, getUserPosts };
+
+    const getUserPosts = (userId: string) => {
+      return postsState.filter((post) => post.data.userId === userId);
+    };
+
+
+
+    return {postsState, getUserPosts};
 };
 export default usePosts;

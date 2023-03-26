@@ -1,21 +1,23 @@
-import React, { useEffect } from 'react'
-import { useSelector } from 'react-redux';
-import styled from 'styled-components';
-import { Post } from '../../components/Post/Post';
-import usePosts from '../../hooks/usePosts';
-import { RootState } from '../../state/store';
+import { useSelector } from "react-redux";
+import styled from "styled-components";
+import { ProfileImages } from "../../components/ProfileImages/ProfileImages";
+import usePosts from "../../hooks/usePosts";
+import { RootState } from "../../state/store";
 
 const User = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-top: 20px;
+
+
   img {
     border-radius: 50%;
     object-fit: cover;
     object-position: center;
   }
 
-  h2{
+  h2 {
     font-size: 1.5rem;
     font-weight: 600;
   }
@@ -24,40 +26,37 @@ const User = styled.div`
     font-size: 1rem;
     font-weight: 600;
   }
-  `
+`;
 const Posts = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-top: 20px;
-`
+  grid-gap: 10px;
+  margin: 20px auto;
+  width: 100%;
+  max-width: 1000px;
+`;
+
 
 const Profile = () => {
   const { user } = useSelector((state: RootState) => state.auth);
-  const {posts, getUserPosts } = usePosts();
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      await getUserPosts(user.uid);
-    };
-    fetchPosts();
-  }, [getUserPosts, user.uid]);
+  const {getUserPosts} = usePosts();
+  const userPosts = getUserPosts(user.uid);
 
   return (
     <>
-    <User>
-      <img src={user.photoURL} alt="avatar"  width={150} height={150}/>
-      <h2>{user.displayName}</h2>
-      <p>Posty: {posts.length}</p>
-    </User>
-    <Posts>
-      {posts.map((post) => (
-        <Post key={post.id} data={post} />
-      ))}
-    </Posts>
-    </>
-    
-  )
-}
+      <User>
+        <img src={user.photoURL} alt="avatar" width={150} height={150} />
+        <h2>{user.displayName || user.email}</h2>
+        <p>Posty: {userPosts.length}</p>
+      </User>
+      <Posts>
+        {userPosts.map((post, index) => (
+          <ProfileImages key={index} data={post} />
+        ))}
+      </Posts>
 
-export default Profile
+    </>
+  );
+};
+
+export default Profile;

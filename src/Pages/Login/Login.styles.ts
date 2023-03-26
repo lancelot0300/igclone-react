@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { boolean } from "yup";
+
 
 export const LoginContainer = styled.div`
   display: flex;
@@ -27,4 +29,3 @@ export const FormStyled = styled.form`
   gap: 20px;
   width:100%;
 `;
-

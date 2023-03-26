@@ -1,40 +1,53 @@
-import  { FC, forwardRef } from "react";
-import { FieldError, FieldErrorsImpl, Merge } from "react-hook-form/dist/types";
-import { StyledInput, StyledLabel } from "./Input.styles";
+import { ChangeEventHandler, FocusEventHandler, forwardRef,} from "react";
 
 interface InputProps {
   type: string;
   placeholder?: string;
-  error?: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined;
-  name?: string;
-  register?: Function;
+  name: string;
   autocomplete?: string;
-  onChange?: Function;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
   accept?: string;
   disabled?: boolean;
-  ref? : any;
+  className?: string;
   multiple?: boolean;
+  onBlur?: FocusEventHandler<HTMLInputElement>;
+  value?: string;
 }
 
-export const Input: FC<InputProps> = forwardRef(({
-  type,
-  placeholder,
-  error,
-  register,
-  name,
-  autocomplete,
-  onChange,
-  accept,
-  disabled,
-  multiple
-}, ref) => {
+export const Input = forwardRef<HTMLInputElement, InputProps> ((
+  {
+    type,
+    placeholder,
+    name,
+    autocomplete,
+    onChange,
+    accept,
+    disabled,
+    className,
+    multiple,
+    onBlur,
+    value,
+    ...rest
+  }, ref
+) => {
   return (
-    <>
-      <StyledInput disabled={disabled} placeholder={placeholder} autoComplete={autocomplete} onChange={onChange} multiple={multiple} type={type} ref={ref} accept={accept} { ...register && {...register(name, {onChange})}} />
-      {error && <StyledLabel>{error.toString()}</StyledLabel>}
-    </>
+    <input
+      type={type}
+      placeholder={placeholder}
+      name={name}
+      autoComplete={autocomplete}
+      onChange={onChange}
+      accept={accept}
+      disabled={disabled}
+      className={className}
+      multiple={multiple}
+      onBlur={onBlur}
+      value={value}
+      ref={ref}
+      {...rest}
+    />
   );
 });
 
 
-
+  

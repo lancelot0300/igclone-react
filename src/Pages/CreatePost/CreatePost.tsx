@@ -1,134 +1,142 @@
 import { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import {
+  FileDropArea,
+  FileInput,
+  FileMessage,
+  StyledInput,
+} from "../../components/Input/Input.styles";
 import { Button } from "../../components/Button/Button";
 import { Form } from "../../components/Form/Form";
-import { Input } from "../../components/Input/Input";
 import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { InputWrapper } from "../../components/ChangeAvatar/ChangeAvatar.styles";
 import { IPost } from "../../interfaces/interfaces";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store";
 import { useNavigate } from "react-router-dom";
 import useFirebase from "../../hooks/useFirebase";
+import {useFormik } from "formik";
 
 const CreatePost = () => {
   const [wait, setWait] = useState(false);
-  const [photo, setPhoto] = useState<File | null>(null);
+  const [photoState, setPhotoState] = useState<File>();
   const { uploadFile, uploadDoc } = useFirebase();
   const { user } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
-  
-  const MAX_FILE_SIZE =  5242880; //5MB
-  const validFileExtensions  = ["jpg", "gif", "png", "jpeg", "svg", "webp", "bmp", "heif", "heic"];
+  const MAX_FILE_SIZE = 5242880; //5MB
+  const validFileExtensions = [
+    "jpg",
+    "gif",
+    "png",
+    "jpeg",
+    "svg",
+    "webp",
+    "bmp",
+    "heif",
+    "heic",
+  ];
 
-  const isValidFileType = (fileName : string, fileType :string) => {
+  const isValidFileType = (fileName: string, fileType: string) => {
     const extension = fileName.split(".").pop();
-    return validFileExtensions.includes(extension || "") && fileType.startsWith("image/");
-  }
-
-  const schema = yup.object().shape({
-    desc: yup.string(),
-    photo: yup.mixed()
-    .required("Photo is required")
-    .test("is-valid-type", "Not a valid image type",
-      value => value && isValidFileType(value[0].name, value[0].type))
-    .test("is-valid-size", `Max allowed size is ${MAX_FILE_SIZE / (1024* 1024)}MB`,
-      value => value && value[0].size <= MAX_FILE_SIZE),
-  });
+    return (
+      validFileExtensions.includes(extension || "") &&
+      fileType.startsWith("image/")
+    );
+  };
 
   interface FormValues {
-    title: string;
     desc: string;
-    photo: File[];
+    photo: File | undefined;
   }
 
+  const onSubmit = async ({ desc, photo }: FormValues) => {
+    setWait(true);
+    const photoUrl = await uploadFile(photo!, user?.uid);
+    const post: IPost = {
+      desc,
+      userId: user?.uid,
+      userPhoto: user?.photoURL,
+      userName: user?.displayName || "",
+      photo: photoUrl,
+      createdAt: new Date().toISOString(),
+    };
+    await uploadDoc("posts", post);
+    setWait(false);
+    navigate("/");
+  };
+
   const {
-    register,
+    values,
+    errors,
+    handleBlur,
     handleSubmit,
-    formState: { errors },
-    setError,
-  } = useForm<FormValues>({
-    resolver: yupResolver(schema),
+    handleChange,
+    setFieldValue,
+  } = useFormik<FormValues>({
+    initialValues: {
+      desc: "",
+      photo: undefined,
+    },
+    validationSchema: yup.object({
+      desc: yup.string().required("Description is required"),
+      photo: yup
+        .mixed()
+        .required("Photo is required")
+        .test(
+          "is-valid-type",
+          "Not a valid image type",
+          (value) => value && isValidFileType(value.name, value.type)
+        )
+        .test(
+          "is-valid-size",
+          "File size is too large",
+          (value) => value && value.size <= MAX_FILE_SIZE
+        ),
+    }),
+    onSubmit,
   });
 
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    try {
-      setWait(true);
-      const url = await uploadFile(data.photo[0], user.uid);
-      const post: IPost = {
-        userName: user.displayName || user.email || "",
-        desc: data.desc,
-        photo: url,
-        userId: user.uid,
-        createdAt: new Date().toISOString(),
-        userPhoto: user.photoURL || "",
-      };
-      uploadDoc("/posts", post);
-    } catch (error) {
-      if (error instanceof Error) {
-        setError("desc", { type: "custom", message: error.message });
-      }
-    }
-    navigate("/");
-    setWait(false);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setPhoto(e.target.files[0]);
-    }
-  };
-
   const showPreview = (file: File) => {
-   
-    if(isValidFileType(file.name, file.type))
-    {
+     if(!isValidFileType(file.name, file.type)) return null;
       return (
         <>
-        <img
+          <img
             width="100px"
             height="100px"
             src={URL.createObjectURL(file)}
             alt="Preview"
           />
-          <p>{(file.size / (1024* 1024)).toFixed(2)}MB</p>
+          <p>{(file.size / (1024 * 1024)).toFixed(1)}MB</p>
         </>
-        
       );
-    }
-    else
-    {
-      return (
-        <p>Invalid file type</p>
-      );
-    }
+  };
 
-  }
+  console.log(errors);
 
   return (
     <>
-      <Form onSubmit={handleSubmit(onSubmit)} title="Create Post">
-        <Input
+      <Form onSubmit={handleSubmit}>
+        <StyledInput
+          $isError={errors.desc ? true : false}
           type="text"
           placeholder="Type a description for your post"
           name="desc"
-          register={register}
-          error={errors.desc?.message}
+          value={values.desc}
+          onChange={handleChange}
         />
-        {photo && showPreview(photo)}
-        <InputWrapper>
-          <span>Click or Drop File</span>
-          <Input
+        <FileMessage $isError={ errors.desc ? true : false}>{errors.desc}</FileMessage>
+        {photoState && showPreview(photoState)}
+        <FileDropArea $isError={errors.photo ? true : false}>
+          <FileMessage $isError={ errors.photo ? true : false}> {errors.photo ? errors.photo : "Drag and Drop"}</FileMessage>
+          <FileInput
             type="file"
             name="photo"
             accept="image/*"
-            multiple={false}
-            register={register}
-            onChange={handleChange}
-            error={errors.photo?.message}
+            onChange={(e) => {
+              setFieldValue("photo", e.target.files![0]);
+              setPhotoState(e.target.files![0]);
+            }}
+            onBlur={handleBlur}
           />
-        </InputWrapper>
+        </FileDropArea>
         <Button disabled={wait} type="submit">
           Create Post
         </Button>

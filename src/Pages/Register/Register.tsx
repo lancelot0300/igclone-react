@@ -9,6 +9,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { auth } from "../../config/config";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
+import { useFormik } from "formik";
 
 export const Register: FC = () => {
   const [wait, setWait] = useState(false);
@@ -31,58 +33,59 @@ export const Register: FC = () => {
     confirmPassword: string;
   }
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setError,
-  } = useForm<FormValues>({
-    resolver: yupResolver(schema),
-  });
-
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    try {
-      setWait(true);
-       await createUserWithEmailAndPassword(
-        auth,
-        data.login,
-        data.password
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        setError("login", { type: "custom", message: error.message });
-        navigate("/register");
-      }
-    }
-    navigate("/");
+  const onSubmit = async ({ login, password }: FormValues) => {
+    setWait(true);
+    await createUserWithEmailAndPassword(auth, login, password).catch((err) =>
+      setErrors({ confirmPassword: err.message })
+    );
     setWait(false);
   };
 
+  const { values, errors, setErrors, handleChange, handleSubmit } =
+    useFormik<FormValues>({
+      initialValues: {
+        login: "",
+        password: "",
+        confirmPassword: "",
+      },
+      validationSchema: schema,
+      onSubmit,
+    });
+
   return (
-    <Form onSubmit={handleSubmit(onSubmit)} title="Register">
+    <Form onSubmit={handleSubmit} title="Register">
       <Input
         type="email"
         placeholder="Email"
         name="login"
-        register={register}
-        error={errors.login?.message}
+        value={values.login}
+        onChange={handleChange}
       />
+      <ErrorMessage $isError={errors.login ? true : false}>
+        {errors && errors.login}
+      </ErrorMessage>
       <Input
         type="password"
         placeholder="Password"
         name="password"
-        register={register}
-        error={errors.password?.message}
         autocomplete="off"
+        value={values.password}
+        onChange={handleChange}
       />
+      <ErrorMessage $isError={errors.password ? true : false}>
+        {errors && errors.password}
+      </ErrorMessage>
       <Input
         type="password"
         placeholder="Confirm Password"
         name="confirmPassword"
-        register={register}
-        error={errors.confirmPassword?.message}
         autocomplete="off"
+        value={values.confirmPassword}
+        onChange={handleChange}
       />
+      <ErrorMessage $isError={errors.confirmPassword ? true : false}>
+        {errors && errors.confirmPassword}
+      </ErrorMessage>
       <Button disabled={wait} type="submit">
         Register
       </Button>
