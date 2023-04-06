@@ -1,7 +1,3 @@
+import { createPortal } from 'react-dom'
 import React from 'react'
 
-export const PopupMessage = () => {
-  return (
-    <div>PopupMessage</div>
-  )
-}

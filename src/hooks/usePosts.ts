@@ -5,9 +5,7 @@ import { IData, IPost } from "../interfaces/interfaces";
 
 const usePosts = () => {
     const [postsState, setPostsState] = useState<IData[]>([]);
-
-      
-
+    
     useEffect(() => {
       const getPosts = async () => {
         const postsCol = collection(db, "posts");
@@ -20,10 +18,6 @@ const usePosts = () => {
         setPostsState(postsList);
       };
       getPosts();
-
-      return () => {
-        console.log( 'unmount');
-      }
     }, []);
 
 
@@ -36,12 +30,8 @@ const usePosts = () => {
       });
     };
 
-    const getUserPosts = (userId: string) => {
-      return postsState.filter((post) => post.data.userId === userId);
-    };
 
 
-
-    return {postsState, getUserPosts};
+    return {postsState};
 };
 export default usePosts;

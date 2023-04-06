@@ -53,8 +53,8 @@ const CreatePost = () => {
     const post: IPost = {
       desc,
       userId: user?.uid,
-      userPhoto: user?.photoURL,
-      userName: user?.displayName || "",
+      userPhoto: user?.photoURL || "",
+      userName: user?.displayName || user.email || "Anonymous",
       photo: photoUrl,
       createdAt: new Date().toISOString(),
     };
@@ -66,10 +66,11 @@ const CreatePost = () => {
   const {
     values,
     errors,
-    handleBlur,
     handleSubmit,
     handleChange,
+    handleBlur,
     setFieldValue,
+    touched,
   } = useFormik<FormValues>({
     initialValues: {
       desc: "",
@@ -115,17 +116,19 @@ const CreatePost = () => {
     <>
       <Form onSubmit={handleSubmit}>
         <StyledInput
-          $isError={errors.desc ? true : false}
+          $isError={errors.desc && touched.desc ? true : false}
           type="text"
           placeholder="Type a description for your post"
           name="desc"
           value={values.desc}
           onChange={handleChange}
+          onBlur={handleBlur}
+          
         />
-        <FileMessage $isError={ errors.desc ? true : false}>{errors.desc}</FileMessage>
+        <FileMessage $isError={ errors.desc && touched.desc ? true : false}>{touched.desc && errors.desc}</FileMessage>
         {photoState && showPreview(photoState)}
-        <FileDropArea $isError={errors.photo ? true : false}>
-          <FileMessage $isError={ errors.photo ? true : false}> {errors.photo ? errors.photo : "Drag and Drop"}</FileMessage>
+        <FileDropArea $isError={errors.photo && touched.photo ? true : false}>
+          <FileMessage $isError={ errors.photo && touched.photo ? true : false}> {errors.photo && touched.photo ? errors.photo : "Drag and Drop"}</FileMessage>
           <FileInput
             type="file"
             name="photo"
