@@ -12,7 +12,7 @@ const StyledImage = styled(Image)`
   height: 100%;
   object-fit: cover;
   object-position: center;
-  max-height: 350px;
+  aspect-ratio: 1/1;
 `;
 const Wrapper = styled.div`
   width: 100%;

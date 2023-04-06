@@ -15,7 +15,7 @@ const Description:FC<IProps> = ({userName, desc}) => {
 
     const isSecondPart = () => {
         if(secondPart.length === 0) return;
-        if(!isExtented) return (<>...<LookMoreBtn onClick={lookMoreHandler}>More</LookMoreBtn></>)
+        if(!isExtented) return (<>... <LookMoreBtn onClick={lookMoreHandler}>More</LookMoreBtn></>)
         return (<>{secondPart} <LookMoreBtn onClick={lookMoreHandler}>Less</LookMoreBtn></>)
     }
 

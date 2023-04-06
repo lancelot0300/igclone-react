@@ -57,7 +57,7 @@ export const Login: FC = () => {
     navigate("/")
   };
 
-  const {values,errors,setErrors, handleChange, handleSubmit} = useFormik<ILoginFormValues>({initialValues: {
+  const {values,errors, touched,setErrors, handleChange, handleSubmit} = useFormik<ILoginFormValues>({initialValues: {
     login: "",
     password: "",
   },
@@ -76,8 +76,9 @@ export const Login: FC = () => {
           autocomplete="email username"
           value={values.login}
           onChange={handleChange}
+          $isError={ errors.login && touched.login ? true : false}
         />
-        <ErrorMessage $isError={ errors.login ? true : false}>{errors.login}</ErrorMessage>
+        <ErrorMessage $isError={ errors.login ? true : false}>{touched.login ? errors.login : ""}</ErrorMessage>
         <StyledInput
           type="password"
           placeholder="Password"
@@ -85,8 +86,9 @@ export const Login: FC = () => {
           autocomplete="current-password"
           value={values.password}
           onChange={handleChange}
+          $isError={ errors.password && touched.password ? true : false}
         />
-        <ErrorMessage $isError={ errors.password ? true : false}>{errors.password}</ErrorMessage>
+        <ErrorMessage $isError={ errors.password && touched.password ? true : false}>{ touched.password ? errors.password : ""}</ErrorMessage>
         <Button disabled={loading} type="submit">
           Log in
         </Button>

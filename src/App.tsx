@@ -17,6 +17,7 @@ import { Home } from "./Pages/Home/Home";
 import Profile from "./Pages/Profile/Profile";
 import Settings from "./Pages/Settings/Settings";
 import CreatePost from "./Pages/CreatePost/CreatePost";
+import { PageNotFound } from "./Pages/PageNotFound/PageNotFound";
 
 const App: FC = () => {
   const dispatch = useAppDispatch();
@@ -117,6 +118,7 @@ const App: FC = () => {
                     </ProtectedRoute>
                   }
                 ></Route>
+                <Route path="*" element={<PageNotFound/>} />
               </Routes>
             </Container>
           </>

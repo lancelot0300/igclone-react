@@ -28,18 +28,19 @@ export const StyledDescription = styled.div<IDescription>`
     `}
 `;
 export const LookMoreBtn = styled.button`
-  margin: 0 auto;
-  padding: 5px 10px;
+  background-color: transparent;
   border: none;
-  border-radius: 5px;
-  background-color: #c0c0c0;
   color: #000;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease-in-out;
-
+  padding: 0;
+  margin: 0;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  outline: none;
   &:hover {
-    color: #fff;
+    text-decoration: underline;
   }
+
 `;

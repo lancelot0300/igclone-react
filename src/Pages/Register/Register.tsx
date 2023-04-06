@@ -1,20 +1,16 @@
 import { FC, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../../components/Button/Button";
 import { Form } from "../../components/Form/Form";
 import { FormLink, StyledMessage } from "../../components/Form/Form.style";
-import { Input } from "../../components/Input/Input";
 import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { auth } from "../../config/config";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
 import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 import { useFormik } from "formik";
+import { StyledInput } from "../../components/Input/Input.styles";
 
 export const Register: FC = () => {
   const [wait, setWait] = useState(false);
-  const navigate = useNavigate();
   const schema = yup.object().shape({
     login: yup.string().email("Invalid email format").required("Required"),
     password: yup
@@ -41,7 +37,7 @@ export const Register: FC = () => {
     setWait(false);
   };
 
-  const { values, errors, setErrors, handleChange, handleSubmit } =
+  const { values, errors, touched, setErrors, handleChange, handleSubmit } =
     useFormik<FormValues>({
       initialValues: {
         login: "",
@@ -54,37 +50,40 @@ export const Register: FC = () => {
 
   return (
     <Form onSubmit={handleSubmit} title="Register">
-      <Input
+      <StyledInput
         type="email"
         placeholder="Email"
         name="login"
         value={values.login}
         onChange={handleChange}
+        $isError={errors.login && touched.login ? true : false}
       />
       <ErrorMessage $isError={errors.login ? true : false}>
-        {errors && errors.login}
+        {touched.login ? errors.login : ""}
       </ErrorMessage>
-      <Input
+      <StyledInput
         type="password"
         placeholder="Password"
         name="password"
         autocomplete="off"
         value={values.password}
         onChange={handleChange}
+        $isError={errors.password && touched.password ? true : false}
       />
       <ErrorMessage $isError={errors.password ? true : false}>
-        {errors && errors.password}
+        {touched.password ? errors.password : ""}
       </ErrorMessage>
-      <Input
+      <StyledInput
         type="password"
         placeholder="Confirm Password"
         name="confirmPassword"
         autocomplete="off"
         value={values.confirmPassword}
         onChange={handleChange}
+        $isError={errors.confirmPassword && touched.confirmPassword ? true : false}
       />
       <ErrorMessage $isError={errors.confirmPassword ? true : false}>
-        {errors && errors.confirmPassword}
+      {touched.confirmPassword ? errors.confirmPassword : ""}
       </ErrorMessage>
       <Button disabled={wait} type="submit">
         Register
