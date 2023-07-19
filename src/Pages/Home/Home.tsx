@@ -8,7 +8,7 @@ export const Home: FC = () => {
 
   const renderPosts = (posts: IData[]) => {
     if (posts) {
-      return posts.map((post) => <Post key={post.id} data={post} />);
+      return posts.map((post) => <Post key={post.id} postData={post} />);
     }
   };
 

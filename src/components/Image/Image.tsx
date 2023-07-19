@@ -6,7 +6,7 @@ interface IProps {
   width?: string | number;
   height?: string | number;
   className?: string;
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 

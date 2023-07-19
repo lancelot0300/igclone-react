@@ -4,24 +4,29 @@ import { StyledPost, StyledUser} from "./Post.styles";
 import Image from "../Image/Image";
 import Likes from "../Likes/Likes";
 import Description from "../Description/Description";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state/store";
+import {useLikes} from "../../hooks/useLikes";
 
 
 interface IProps {
-  data: IData ;
+  postData: IData ;
 }
 
-export const Post: FC<IProps> = ({data}) => {
+export const Post: FC<IProps> = ({postData}) => {
 
-  const {desc, photo, userPhoto,likes, userName } = data.data;
+  const { user } = useSelector((state: RootState) => state.auth);
+  const {desc, photo, userPhoto,likes, userName } = postData.data;
+  const {liked, likesCount, handleLike, handleDoubleLike } = useLikes(likes, postData.id, user?.uid);
 
   return (
     <StyledPost>
       <StyledUser>
         <Image width="50px" height="50px" src={userPhoto} alt="user" />
-        <span>{data.data.userName}</span>
+        <span>{userName}</span>
       </StyledUser>
-      <Image src={photo} alt="test"/>
-      <Likes likes={likes} postId={data.id} />
+      <Image src={photo} onClick={handleDoubleLike} alt="test"/>
+      <Likes likesCount={likesCount} handleClick={handleLike}  liked={liked}/>
       <Description userName={userName} desc={desc}></Description>
     </StyledPost>
   );
