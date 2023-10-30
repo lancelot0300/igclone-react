@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IUser } from "../../../interfaces/interfaces";
-import {signOut} from "firebase/auth";
 import { auth } from "../../../config/config";
 
 

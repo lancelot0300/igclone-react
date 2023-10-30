@@ -5,6 +5,7 @@ import usePosts from "../../hooks/usePosts";
 
 export const Home: FC = () => {
   const { postsState } = usePosts();
+  console.log(postsState);
 
   const renderPosts = (posts: IData[]) => {
     if (posts) {

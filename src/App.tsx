@@ -20,31 +20,8 @@ import CreatePost from "./Pages/CreatePost/CreatePost";
 import { PageNotFound } from "./Pages/PageNotFound/PageNotFound";
 
 const App: FC = () => {
-  const dispatch = useAppDispatch();
   const { user } = useSelector((state: RootState) => state.auth);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        const { email, uid, photoURL } = user;
-        dispatch(
-          loginSuccess({
-            isAuth: true,
-            email,
-            uid,
-            photoURL: photoURL || initialState.user.photoURL,
-            displayName: user.displayName || initialState.user.displayName,
-          })
-        );
-        setLoading(false);
-      } else {
-        dispatch(loginFailure());
-        setLoading(false);
-      }
-    });
-    return unsubscribe;
-  }, [dispatch]);
 
   return (
     <>
