@@ -32,11 +32,15 @@ export const MenuProfile: FC<MenuProfileProps> = () => {
 
   return (
     <>
-      <MenuProfileImage ref={imgRef} src={user.photoURL} alt="profile" onClick={() => setShowMenu((prev) => !prev)} />
-
+      <MenuProfileImage
+        onClick={() => setShowMenu((prev) => !prev)}
+        ref={imgRef}
+        src={user?.photoURL || ""}
+        alt="profile"
+      />
       
       {showMenu &&
-        (user.isAuth ? (
+        (user ? (
           <LoggedDropdown dropdownRef={dropdownRef} onClick={() => setShowMenu((prev) => !prev)} />
         ) : (
           <UnloggedDropdown dropdownRef={dropdownRef} onClick={() => setShowMenu((prev) => !prev)} />

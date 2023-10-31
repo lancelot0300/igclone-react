@@ -3,7 +3,6 @@ import { Route, Routes } from "react-router-dom";
 import Menu from "./components/Menu/Menu";
 import { ProtectedRoute } from "./components/ProtectedRoute/ProtectedRoute";
 import { AppContainer, Container, GlobalStyle } from "./App.styles";
-import { auth } from "./config/config";
 import {
   initialState,
   loginFailure,
@@ -21,7 +20,7 @@ import { PageNotFound } from "./Pages/PageNotFound/PageNotFound";
 
 const App: FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   return (
     <>
@@ -37,8 +36,8 @@ const App: FC = () => {
               <Routes>
                 <Route
                   path="/login"
-                  element={
-                    <ProtectedRoute isAllowed={!user.isAuth} redirectPath="/">
+                  element={ 
+                    <ProtectedRoute isAllowed={!user} redirectPath="/">
                       <Login />
                     </ProtectedRoute>
                   }
@@ -46,7 +45,7 @@ const App: FC = () => {
                <Route
                   path="/register"
                   element={
-                    <ProtectedRoute isAllowed={!user.isAuth} redirectPath="/">
+                    <ProtectedRoute isAllowed={!user} redirectPath="/">
                       <Register />
                     </ProtectedRoute>
                   }
@@ -55,18 +54,18 @@ const App: FC = () => {
                   path="/"
                   element={
                     <ProtectedRoute
-                      isAllowed={user.isAuth}
+                      isAllowed={user ? true : false}
                       redirectPath="/login"
                     >
                       <Home />
-                    </ProtectedRoute>
+                   </ProtectedRoute> 
                   }
                 ></Route>
                 <Route
                   path="/profile/:id"
                   element={
                     <ProtectedRoute
-                      isAllowed={user.isAuth}
+                      isAllowed={user ? true : false}
                       redirectPath="/login"
                     >
                       <Profile></Profile>
@@ -77,7 +76,7 @@ const App: FC = () => {
                   path="/settings"
                   element={
                     <ProtectedRoute
-                      isAllowed={user.isAuth}
+                      isAllowed={user ? true : false}
                       redirectPath="/login"
                     >
                       <Settings></Settings>
@@ -88,10 +87,10 @@ const App: FC = () => {
                   path="/create-post"
                   element={
                     <ProtectedRoute
-                      isAllowed={user.isAuth}
+                      isAllowed={user ? true : false}
                       redirectPath="/login"
                     >
-                      <CreatePost></CreatePost>
+                      <CreatePost/>
                     </ProtectedRoute>
                   }
                 ></Route>

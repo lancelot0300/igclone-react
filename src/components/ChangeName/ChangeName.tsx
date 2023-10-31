@@ -2,7 +2,6 @@ import { updateProfile } from "firebase/auth";
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { FC, useRef, useState } from "react";
 import styled from "styled-components";
-import { auth, db } from "../../config/config";
 import { IUser } from "../../interfaces/interfaces";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import { Input } from "../Input/Input";
@@ -40,29 +39,32 @@ const ChangeName: FC<IProps> = ({ user }) => {
   const [error, setError] = useState<string | undefined>("");
 
   const handleChangeClick = async () => {
-    if (!auth.currentUser) return;
-    if (!inputRef.current?.value) return;
+  }
 
-    const postsColl = collection(db, "posts");
-    const querySnapshot = await getDocs(postsColl).catch(() => {
-      setError("Something went wrong with the database.");
-    });
-    if(!querySnapshot) return;
+  // const handleChangeClick = async () => {
+  //   if (!auth.currentUser) return;
+  //   if (!inputRef.current?.value) return;
 
-    await updateProfile(auth.currentUser, {
-      displayName: inputRef.current?.value,
-    }).catch(() => {
-      setError("Something went wrong with updating the profile.");
-    });
+  //   const postsColl = collection(db, "posts");
+  //   const querySnapshot = await getDocs(postsColl).catch(() => {
+  //     setError("Something went wrong with the database.");
+  //   });
+  //   if(!querySnapshot) return;
 
-    querySnapshot.forEach(async (document) => {
-      if (document.data().userId === user.uid) {
-        const postId = document.id;
-        const docRef = doc(db, "posts", postId);
-        await updateDoc(docRef, { userName: inputRef.current?.value });
-      }
-    });
-  };
+  //   await updateProfile(auth.currentUser, {
+  //     displayName: inputRef.current?.value,
+  //   }).catch(() => {
+  //     setError("Something went wrong with updating the profile.");
+  //   });
+
+  //   querySnapshot.forEach(async (document) => {
+  //     if (document.data().userId === user.uid) {
+  //       const postId = document.id;
+  //       const docRef = doc(db, "posts", postId);
+  //       await updateDoc(docRef, { userName: inputRef.current?.value });
+  //     }
+  //   });
+  // };
 
   return (
     <>

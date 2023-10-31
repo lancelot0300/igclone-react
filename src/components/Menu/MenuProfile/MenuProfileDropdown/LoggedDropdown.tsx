@@ -7,6 +7,7 @@ import {
   MenuProfileDropdownItem,
   MenuProfileDropdownStyledLink,
 } from "../../Menu.styles";
+import { useNavigate } from "react-router-dom";
 
 interface LoggedDropdownProps {
     dropdownRef: React.RefObject<HTMLDivElement>;
@@ -17,9 +18,11 @@ export const LoggedDropdown: React.FC<LoggedDropdownProps> = ({ dropdownRef, onC
 
     const dispatch = useAppDispatch();
     const { user } = useSelector((state: RootState) => state.auth);
+    const navigate = useNavigate();
 
     const handleLogoutClick = () => {
         dispatch(logout());
+        navigate("/login");
     };
 
     return (
@@ -30,7 +33,7 @@ export const LoggedDropdown: React.FC<LoggedDropdownProps> = ({ dropdownRef, onC
             <MenuProfileDropdownStyledLink to={`/create-post`}>
                 <MenuProfileDropdownItem onClick={onClick}>Create Post</MenuProfileDropdownItem>
             </MenuProfileDropdownStyledLink>
-            <MenuProfileDropdownStyledLink to={`/profile/${user.uid}`}>
+            <MenuProfileDropdownStyledLink to={`/profile/${user._id}`}>
                 <MenuProfileDropdownItem onClick={onClick}>Profile</MenuProfileDropdownItem>
             </MenuProfileDropdownStyledLink>
             <MenuProfileDropdownStyledLink to="/settings">

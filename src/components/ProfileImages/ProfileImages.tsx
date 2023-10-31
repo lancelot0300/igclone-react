@@ -1,10 +1,10 @@
 import { FC } from "react";
 import styled from "styled-components";
-import { IData } from "../../interfaces/interfaces";
+import { IData, IUser } from "../../interfaces/interfaces";
 import Image from "../Image/Image";
 
 interface IProps {
-  data: IData;
+  data: IUser;
 }
 
 const StyledImage = styled(Image)`
@@ -20,11 +20,11 @@ const Wrapper = styled.div`
 `;
 
 export const ProfileImages: FC<IProps> = ({ data }) => {
-  const { photo } = data.data;
+  const { photoURL } = data;
 
   return (
     <Wrapper>
-      <StyledImage src={photo} alt="test" width="150px" height="150px" />
+      <StyledImage src={photoURL} alt="test" width="150px" height="150px" />
     </Wrapper>
   );
 };

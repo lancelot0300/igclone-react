@@ -1,17 +1,27 @@
-import { FC } from "react";
-import { IData } from "../../interfaces/interfaces";
+import { FC, useEffect } from "react";
+import { IData, IPost, IPostResponse } from "../../interfaces/interfaces";
 import { Post } from "../../components/Post/Post";
-import usePosts from "../../hooks/usePosts";
+import { useFetch } from "../../hooks/useFetch";
+
 
 export const Home: FC = () => {
-  const { postsState } = usePosts();
-  console.log(postsState);
 
-  const renderPosts = (posts: IData[]) => {
-    if (posts) {
-      return posts.map((post) => <Post key={post.id} postData={post} />);
+  const {data, refetch} = useFetch<IPostResponse[]>("/posts");
+
+    useEffect(() => {
+      refetch();
     }
+    , [refetch]);
+
+  const renderPosts = (posts: IPostResponse[]) => {
+      return posts.map((post) => {
+        return <Post postData={post} key={post._id} />;
+      });
   };
 
-  return <>{renderPosts(postsState)}</>;
+  return (
+    <>
+      {data ? renderPosts(data) : <h1>Loading...</h1>}
+    </>
+  );
 };

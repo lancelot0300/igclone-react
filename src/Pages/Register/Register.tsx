@@ -3,7 +3,6 @@ import { Button } from "../../components/Button/Button";
 import { Form } from "../../components/Form/Form";
 import { FormLink, StyledMessage } from "../../components/Form/Form.style";
 import * as yup from "yup";
-import { auth } from "../../config/config";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 import { useFormik } from "formik";
@@ -30,11 +29,11 @@ export const Register: FC = () => {
   }
 
   const onSubmit = async ({ login, password }: FormValues) => {
-    setWait(true);
-    await createUserWithEmailAndPassword(auth, login, password).catch((err) =>
-      setErrors({ confirmPassword: err.message })
-    );
-    setWait(false);
+    // setWait(true);
+    // await createUserWithEmailAndPassword(auth, login, password).catch((err) =>
+    //   setErrors({ confirmPassword: err.message })
+    // );
+    // setWait(false);
   };
 
   const { values, errors, touched, setErrors, handleChange, handleSubmit } =

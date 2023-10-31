@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ProfileImages } from "../../components/ProfileImages/ProfileImages";
-import usePosts from "../../hooks/usePosts";
 import { IData } from "../../interfaces/interfaces";
 
 const User = styled.div`
@@ -52,17 +51,17 @@ const Posts = styled.div`
 `;
 
 const Profile = () => {
-  const { postsState } = usePosts();
   let { id } = useParams();
   const [userPosts, setUserPosts] = useState<IData[]>([]);
+  const postsState: IData[] = [];
 
   useEffect(() => {
-    const userPosts = postsState.filter((post) => post.data.userId === id);
+    const userPosts = postsState.filter((post) => post.data);
     setUserPosts(userPosts);
     return () => {
       setUserPosts([]);
     };
-  }, [id, postsState]);
+  }, [id]);
 
   if (!postsState) return <h1>Loadig...</h1>;
   if (!userPosts) return <h1>Fetching User Posts...</h1>;
@@ -71,19 +70,19 @@ const Profile = () => {
   return (
     <>
       <User>
-        <img
+        {/* <img
           src={userPosts[0].data.userPhoto}
           alt="avatar"
           width={150}
           height={150}
         />
-        <h2>{userPosts[0].data.userName}</h2>
+        <h2>{userPosts[0].data.userName}</h2> */}
         <p>Posty: {userPosts.length}</p>
       </User>
       <Posts>
-        {userPosts.map((post, index) => (
+        {/* {userPosts.map((post, index) => (
           <ProfileImages key={index} data={post} />
-        ))}
+        ))} */}
       </Posts>
     </>
   );

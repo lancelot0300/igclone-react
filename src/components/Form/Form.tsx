@@ -5,12 +5,13 @@ interface FormProps {
   children: ReactNode[] | ReactNode;
   onSubmit?: React.FormEventHandler<HTMLFormElement>;
   title?: string;
+  encType?: string;
 }
 
-export const Form: FC<FormProps> = ({ children, onSubmit, title }) => {
+export const Form: FC<FormProps> = ({ children, onSubmit, title, encType }) => {
   return (
     <FormContainer>
-      <FormStyled onSubmit={onSubmit}>
+      <FormStyled encType={encType} onSubmit={onSubmit}>
         <StyledTitle>{title}</StyledTitle>
         {children}
       </FormStyled>

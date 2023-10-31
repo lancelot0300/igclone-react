@@ -12,15 +12,49 @@ import { IPost } from "../../interfaces/interfaces";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store";
 import { useNavigate } from "react-router-dom";
-import useFirebase from "../../hooks/useFirebase";
-import {useFormik } from "formik";
+import { useFormik } from "formik";
+import { useMutation } from "react-query";
+import axios from "axios";
+
+const sendFile = async (file: File) => {
+  const formData = new FormData();
+  formData.append("image", file);
+
+  try {
+    const response = await axios.post(
+      "http://localhost:8800/api/upload/uploadFile",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error("Login failed"); // Handle the error appropriately
+  }
+};
+
+const createPost = async (post: IPost) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:8800/api/posts/createPost",
+      post
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error("Login failed"); // Handle the error appropriately
+  }
+};
 
 const CreatePost = () => {
   const [wait, setWait] = useState(false);
   const [photoState, setPhotoState] = useState<File>();
-  const { uploadFile, uploadDoc } = useFirebase();
   const { user } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
+  const fileMutation = useMutation(sendFile);
+  const postMutation = useMutation(createPost);
   const MAX_FILE_SIZE = 5242880; //5MB
   const validFileExtensions = [
     "jpg",
@@ -48,17 +82,15 @@ const CreatePost = () => {
   }
 
   const onSubmit = async ({ desc, photo }: FormValues) => {
+    if (!photo) return;
     setWait(true);
-    const photoUrl = await uploadFile(photo!, user?.uid);
+    const res = await fileMutation.mutateAsync(photo);
     const post: IPost = {
       desc,
-      userId: user?.uid,
-      userPhoto: user?.photoURL || "",
-      userName: user?.displayName || user.email || "Anonymous",
-      photo: photoUrl,
-      createdAt: new Date().toISOString(),
+      userId: user._id,
+      photo: res.fileUrl,
     };
-    await uploadDoc("posts", post);
+    await postMutation.mutateAsync(post);
     setWait(false);
     navigate("/");
   };
@@ -96,22 +128,19 @@ const CreatePost = () => {
   });
 
   const showPreview = (file: File) => {
-     if(!isValidFileType(file.name, file.type)) return null;
-      return (
-        <>
-          <img
-            width="100px"
-            height="100px"
-            src={URL.createObjectURL(file)}
-            alt="Preview"
-          />
-          <p>{(file.size / (1024 * 1024)).toFixed(1)}MB</p>
-        </>
-      );
+    if (!isValidFileType(file.name, file.type)) return null;
+    return (
+      <>
+        <img
+          width="100px"
+          height="100px"
+          src={URL.createObjectURL(file)}
+          alt="Preview"
+        />
+        <p>{(file.size / (1024 * 1024)).toFixed(1)}MB</p>
+      </>
+    );
   };
-
-  console.log(errors);
-
   return (
     <>
       <Form onSubmit={handleSubmit}>
@@ -123,15 +152,18 @@ const CreatePost = () => {
           value={values.desc}
           onChange={handleChange}
           onBlur={handleBlur}
-          
         />
-        <FileMessage $isError={ errors.desc && touched.desc ? true : false}>{touched.desc && errors.desc}</FileMessage>
+        <FileMessage $isError={errors.desc && touched.desc ? true : false}>
+          {touched.desc && errors.desc}
+        </FileMessage>
         {photoState && showPreview(photoState)}
         <FileDropArea $isError={errors.photo && touched.photo ? true : false}>
-          <FileMessage $isError={ errors.photo && touched.photo ? true : false}> {errors.photo && touched.photo ? errors.photo : "Drag and Drop"}</FileMessage>
+          <FileMessage $isError={errors.photo && touched.photo ? true : false}>
+            {errors.photo && touched.photo ? errors.photo : "Drag and Drop"}
+          </FileMessage>
           <FileInput
             type="file"
-            name="photo"
+            name="image"
             accept="image/*"
             onChange={(e) => {
               setFieldValue("photo", e.target.files![0]);

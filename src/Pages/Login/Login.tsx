@@ -8,57 +8,74 @@ import {useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 import { StyledInput } from "../../components/Input/Input.styles";
-import { auth } from "../../config/config";
-import { browserLocalPersistence, setPersistence, signInWithEmailAndPassword } from "firebase/auth";
 import { initialState, loginFailure, loginSuccess } from "../../state/features/auth/authSlice";
+import { IUser } from "../../interfaces/interfaces";
+import { useMutation } from "react-query";
+import axios from "axios";
+import { type } from "os";
 
 interface ILoginFormValues {
-  login: string;
+  email: string;
   password: string;
 }
+
+type ILoginResponse = {
+  details: IUser;
+  token: string;
+};
+
+type ILoginCredentials = {
+  email: string;
+  password: string;
+};
+
+const loginUser = async (credentials: ILoginCredentials ) => {
+  try {
+    const response = await axios.post('http://localhost:8800/api/auth/login', credentials);
+    return response.data.details;
+  } catch (error) {
+    throw new Error('Login failed'); // Handle the error appropriately
+  }
+};
 
 export const Login: FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useAppDispatch()
+  const mutation = useMutation(loginUser);
   const schema = yup.object().shape({
-    login: yup.string().email("Invalid email format").required("Login is required"),
+    email: yup.string().email("Invalid email format").required("Login is required"),
     password: yup.string().min(5).required("Password is required"),
   });
 
 
 
-  const onSubmit = async ({login, password} : ILoginFormValues) => {
-    setLoading(true)
-    await setPersistence(auth, browserLocalPersistence)
-
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      login,
-      password
-    ).catch(errors => {setErrors({password:errors.message})})
-
-    if (!userCredential) 
-    {
-      dispatch(loginFailure);
+  const onSubmit = async ({email, password} : ILoginFormValues) => {
+    
+    try {
+  
+      const res = await mutation.mutateAsync({email: email, password: password});
+      dispatch(loginSuccess(res))
+        console.log(res)
+    } catch (error) {
+      dispatch(loginFailure())
       setLoading(false)
-      return;
-    };
+     }
 
-    const user = {
-      isAuth: true,
-      email: userCredential.user.email || initialState.user.email,
-      uid: userCredential.user.uid,
-      photoURL: userCredential.user.photoURL || initialState.user.photoURL,
-      displayName:
-        userCredential.user.displayName || initialState.user.displayName,
+
+    // const user = {
+    //   isAuth: true,
+    //   email: userCredential.user.email || initialState.user.email,
+    //   uid: userCredential.user.uid,
+    //   photoURL: userCredential.user.photoURL || initialState.user.photoURL,
+    //   displayName:
+    //     userCredential.user.displayName || initialState.user.displayName,
+    // };
+    // dispatch(loginSuccess(user))
     };
-    dispatch(loginSuccess(user))
-    navigate("/")
-  };
 
   const {values,errors, touched,setErrors, handleChange, handleSubmit} = useFormik<ILoginFormValues>({initialValues: {
-    login: "",
+    email: "",
     password: "",
   },
   onSubmit,
@@ -72,13 +89,13 @@ export const Login: FC = () => {
         <StyledInput
           type="email"
           placeholder="Email"
-          name="login"
+          name="email"
           autocomplete="email username"
-          value={values.login}
+          value={values.email}
           onChange={handleChange}
-          $isError={ errors.login && touched.login ? true : false}
+          $isError={ errors.email && touched.email ? true : false}
         />
-        <ErrorMessage $isError={ errors.login ? true : false}>{touched.login ? errors.login : ""}</ErrorMessage>
+        <ErrorMessage $isError={ errors.email ? true : false}>{touched.email ? errors.email : ""}</ErrorMessage>
         <StyledInput
           type="password"
           placeholder="Password"

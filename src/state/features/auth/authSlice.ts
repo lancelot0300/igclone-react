@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IUser } from "../../../interfaces/interfaces";
-import { auth } from "../../../config/config";
 
 
 interface IInitialState {
@@ -8,15 +7,9 @@ interface IInitialState {
 }
 
 
-
+const userFromLocalStorage = localStorage.getItem("user");
 export const initialState: IInitialState = {
-  user: {
-    isAuth: false,
-    uid: "",
-    email: null,
-    photoURL: "https://i0.wp.com/www.mnleadership.org/wp-content/uploads/2017/02/Anonymous-Avatar.png?ssl=1",
-    displayName: null,
-  },
+  user: userFromLocalStorage ? JSON.parse(userFromLocalStorage) : null,
 };
 
  const authSlice = createSlice({
@@ -25,16 +18,14 @@ export const initialState: IInitialState = {
   reducers: {
     loginSuccess: (state, action: PayloadAction<IUser>) => {
       state.user = action.payload;
+      localStorage.setItem("user", JSON.stringify(action.payload));
     },
     loginFailure: (state) => {
       state.user = initialState.user;
     },
     logout: (state) => {
       state.user = initialState.user;
-      signOut(auth);
-    },
-    avatarChange: (state, action: PayloadAction<string>) => {
-      state.user.photoURL = action.payload;
+      localStorage.removeItem("user");
     },
   },
 });
@@ -42,5 +33,5 @@ export const initialState: IInitialState = {
 
 
 export default authSlice.reducer;
-export const { loginSuccess, loginFailure, logout, avatarChange } = authSlice.actions;
+export const { loginSuccess, loginFailure, logout } = authSlice.actions;
 
