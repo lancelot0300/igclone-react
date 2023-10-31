@@ -4,7 +4,6 @@ import Menu from "./components/Menu/Menu";
 import { ProtectedRoute } from "./components/ProtectedRoute/ProtectedRoute";
 import { AppContainer, Container, GlobalStyle } from "./App.styles";
 import {
-  initialState,
   loginFailure,
   loginSuccess,
 } from "./state/features/auth/authSlice";
@@ -21,6 +20,19 @@ import { PageNotFound } from "./Pages/PageNotFound/PageNotFound";
 const App: FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const [loading, setLoading] = useState(false);
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    setLoading(true);
+    const userFromLocalStorage = localStorage.getItem("user");
+    if (userFromLocalStorage) {
+      dispatch(loginSuccess(JSON.parse(userFromLocalStorage)));
+    } else {
+      dispatch(loginFailure());
+    }
+    setLoading(false);
+  }, [dispatch]);
 
   return (
     <>

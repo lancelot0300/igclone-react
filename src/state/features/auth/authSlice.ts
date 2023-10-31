@@ -3,13 +3,12 @@ import { IUser } from "../../../interfaces/interfaces";
 
 
 interface IInitialState {
-  user: IUser;
+  user: IUser | null;
 }
 
 
-const userFromLocalStorage = localStorage.getItem("user");
-export const initialState: IInitialState = {
-  user: userFromLocalStorage ? JSON.parse(userFromLocalStorage) : null,
+const initialState: IInitialState = {
+  user: null,
 };
 
  const authSlice = createSlice({
@@ -17,21 +16,24 @@ export const initialState: IInitialState = {
   initialState,
   reducers: {
     loginSuccess: (state, action: PayloadAction<IUser>) => {
-      state.user = action.payload;
       localStorage.setItem("user", JSON.stringify(action.payload));
+      state.user = action.payload;
     },
     loginFailure: (state) => {
       state.user = initialState.user;
     },
     logout: (state) => {
-      state.user = initialState.user;
       localStorage.removeItem("user");
+      state.user = initialState.user;
     },
+    userUpdated: (state, action: PayloadAction<IUser>) => {
+      state.user = action.payload;
+    }
   },
 });
 
 
 
 export default authSlice.reducer;
-export const { loginSuccess, loginFailure, logout } = authSlice.actions;
+export const { loginSuccess, loginFailure, logout, userUpdated } = authSlice.actions;
 

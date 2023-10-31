@@ -13,8 +13,8 @@ const Settings = () => {
   return (
     <StyledSettings>
       <h1>Settings</h1>
-      <ChangeAvatar user={user}/>
-      <ChangeName user={user} />
+      <ChangeAvatar user={user!}/>
+      <ChangeName user={user!} />
     </StyledSettings>
   );
 };

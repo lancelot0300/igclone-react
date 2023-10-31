@@ -8,7 +8,7 @@ import {useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 import { StyledInput } from "../../components/Input/Input.styles";
-import { initialState, loginFailure, loginSuccess } from "../../state/features/auth/authSlice";
+import { loginFailure, loginSuccess } from "../../state/features/auth/authSlice";
 import { IUser } from "../../interfaces/interfaces";
 import { useMutation } from "react-query";
 import axios from "axios";
@@ -31,8 +31,8 @@ type ILoginCredentials = {
 
 const loginUser = async (credentials: ILoginCredentials ) => {
   try {
-    const response = await axios.post('http://localhost:8800/api/auth/login', credentials);
-    return response.data.details;
+    const response = await axios.post('http://localhost:8800/api/auth/login', credentials, {withCredentials: true});
+    return response.data;
   } catch (error) {
     throw new Error('Login failed'); // Handle the error appropriately
   }
@@ -51,27 +51,15 @@ export const Login: FC = () => {
 
 
   const onSubmit = async ({email, password} : ILoginFormValues) => {
-    
     try {
   
-      const res = await mutation.mutateAsync({email: email, password: password});
+      const res = await mutation.mutateAsync({email, password});
       dispatch(loginSuccess(res))
         console.log(res)
     } catch (error) {
       dispatch(loginFailure())
       setLoading(false)
      }
-
-
-    // const user = {
-    //   isAuth: true,
-    //   email: userCredential.user.email || initialState.user.email,
-    //   uid: userCredential.user.uid,
-    //   photoURL: userCredential.user.photoURL || initialState.user.photoURL,
-    //   displayName:
-    //     userCredential.user.displayName || initialState.user.displayName,
-    // };
-    // dispatch(loginSuccess(user))
     };
 
   const {values,errors, touched,setErrors, handleChange, handleSubmit} = useFormik<ILoginFormValues>({initialValues: {

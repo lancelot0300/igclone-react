@@ -33,7 +33,7 @@ export const LoggedDropdown: React.FC<LoggedDropdownProps> = ({ dropdownRef, onC
             <MenuProfileDropdownStyledLink to={`/create-post`}>
                 <MenuProfileDropdownItem onClick={onClick}>Create Post</MenuProfileDropdownItem>
             </MenuProfileDropdownStyledLink>
-            <MenuProfileDropdownStyledLink to={`/profile/${user._id}`}>
+            <MenuProfileDropdownStyledLink to={`/profile/${user?._id}`}>
                 <MenuProfileDropdownItem onClick={onClick}>Profile</MenuProfileDropdownItem>
             </MenuProfileDropdownStyledLink>
             <MenuProfileDropdownStyledLink to="/settings">
