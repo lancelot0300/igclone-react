@@ -22,29 +22,30 @@ const sendFile = async (file: File) => {
 
   try {
     const response = await axios.post(
-      "http://localhost:8800/api/upload/uploadFile",
+      "https://maszaweb.pl:1256/api/upload/uploadFile",
       formData,
       {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        withCredentials: true,
       }
     );
     return response.data;
   } catch (error) {
-    throw new Error("Login failed"); // Handle the error appropriately
+    throw new Error("Uploading photo faild"); // Handle the error appropriately
   }
 };
 
 const createPost = async (post: IPost) => {
   try {
     const response = await axios.post(
-      "http://localhost:8800/api/posts/createPost",
+      "https://maszaweb.pl:1256/api/posts/createPost",
       post
     );
     return response.data;
   } catch (error) {
-    throw new Error("Login failed"); // Handle the error appropriately
+    throw new Error("Adding post failed"); // Handle the error appropriately
   }
 };
 
@@ -82,12 +83,12 @@ const CreatePost = () => {
   }
 
   const onSubmit = async ({ desc, photo }: FormValues) => {
-    if (!photo) return;
+    if (!photo || !user) return;
     setWait(true);
     const res = await fileMutation.mutateAsync(photo);
     const post: IPost = {
       desc,
-      userId: user?._id!,
+      userId: user._id,
       photo: res.fileUrl,
     };
     await postMutation.mutateAsync(post);

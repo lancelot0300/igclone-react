@@ -1,11 +1,12 @@
-import { updateProfile } from "firebase/auth";
-import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { FC, useRef, useState } from "react";
 import styled from "styled-components";
 import { IUser } from "../../interfaces/interfaces";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
-import { Input } from "../Input/Input";
 import { StyledInput } from "../Input/Input.styles";
+import axios from "axios";
+import { useMutation } from "react-query";
+import { useAppDispatch } from "../../state/store";
+import { userUpdated } from "../../state/features/auth/authSlice";
 
 interface IProps {
   user: IUser;
@@ -34,37 +35,53 @@ const StyledWrapper = styled.div`
   }
 `;
 
+const updateUser = async (user: IUser) => {
+  try {
+    const response = await axios.put(
+      "https://maszaweb.pl:1256/api/users/"+ user._id,
+      user,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error("Login failed"); // Handle the error appropriately
+  }
+};
+
+
 const ChangeName: FC<IProps> = ({ user }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | undefined>("");
+  const [message, setMessage] = useState<string | undefined>("");
+  const [wait, setWait] = useState(false);
+  const mutation = useMutation(updateUser)
+  const dispatch = useAppDispatch();
 
   const handleChangeClick = async () => {
-  }
 
-  // const handleChangeClick = async () => {
-  //   if (!auth.currentUser) return;
-  //   if (!inputRef.current?.value) return;
+    message && setMessage("");
+    error && setError("");
 
-  //   const postsColl = collection(db, "posts");
-  //   const querySnapshot = await getDocs(postsColl).catch(() => {
-  //     setError("Something went wrong with the database.");
-  //   });
-  //   if(!querySnapshot) return;
+    if(!inputRef.current?.value) return setError("Type name")
+    setWait(true);
 
-  //   await updateProfile(auth.currentUser, {
-  //     displayName: inputRef.current?.value,
-  //   }).catch(() => {
-  //     setError("Something went wrong with updating the profile.");
-  //   });
+    const updatedUser: IUser = {
+      ...user,
+      displayName: inputRef.current.value
+    };
 
-  //   querySnapshot.forEach(async (document) => {
-  //     if (document.data().userId === user.uid) {
-  //       const postId = document.id;
-  //       const docRef = doc(db, "posts", postId);
-  //       await updateDoc(docRef, { userName: inputRef.current?.value });
-  //     }
-  //   });
-  // };
+    if(user.displayName === inputRef.current.value){
+      setError("Type different name");
+      return setWait(false);
+    }
+
+    const res = await mutation.mutateAsync(updatedUser);
+    dispatch(userUpdated(res))
+    setMessage("Name changed")
+    setWait(false);
+  };
 
   return (
     <>
@@ -74,11 +91,14 @@ const ChangeName: FC<IProps> = ({ user }) => {
         type="text"
         name="name"
         placeholder={user.displayName || user.email || ""}
+        onChange={() => setError("")}
         $isError={!!error}
         ref={inputRef}
       />
-      <button onClick={handleChangeClick}>Change</button>
+      <button disabled={wait} onClick={handleChangeClick}>Change</button>
     </StyledWrapper>
+    {wait && <div>Wait...</div>}
+    {message && <div>{message}</div>}
     <ErrorMessage $isError={error ? true : false}>{error}</ErrorMessage>
     </>
   );

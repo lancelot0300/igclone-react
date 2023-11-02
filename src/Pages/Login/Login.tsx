@@ -10,9 +10,7 @@ import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 import { StyledInput } from "../../components/Input/Input.styles";
 import { loginFailure, loginSuccess } from "../../state/features/auth/authSlice";
 import { IUser } from "../../interfaces/interfaces";
-import { useMutation } from "react-query";
 import axios from "axios";
-import { type } from "os";
 
 interface ILoginFormValues {
   email: string;
@@ -29,20 +27,11 @@ type ILoginCredentials = {
   password: string;
 };
 
-const loginUser = async (credentials: ILoginCredentials ) => {
-  try {
-    const response = await axios.post('http://localhost:8800/api/auth/login', credentials, {withCredentials: true});
-    return response.data;
-  } catch (error) {
-    throw new Error('Login failed'); // Handle the error appropriately
-  }
-};
 
 export const Login: FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useAppDispatch()
-  const mutation = useMutation(loginUser);
   const schema = yup.object().shape({
     email: yup.string().email("Invalid email format").required("Login is required"),
     password: yup.string().min(5).required("Password is required"),
@@ -52,13 +41,19 @@ export const Login: FC = () => {
 
   const onSubmit = async ({email, password} : ILoginFormValues) => {
     try {
-  
-      const res = await mutation.mutateAsync({email, password});
-      dispatch(loginSuccess(res))
-        console.log(res)
-    } catch (error) {
+      const response = await axios.post('https://maszaweb.pl:1256/api/auth/login', {
+        email: email,
+        password: password,
+      }, {
+        withCredentials: true,
+      });
+      dispatch(loginSuccess(response.data))
+      navigate("/")
+    } catch (error: any) {
       dispatch(loginFailure())
-      setLoading(false)
+      if(error){
+        setErrors({password: error.response.data.message})
+      }
      }
     };
 

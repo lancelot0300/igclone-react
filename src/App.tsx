@@ -3,10 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import Menu from "./components/Menu/Menu";
 import { ProtectedRoute } from "./components/ProtectedRoute/ProtectedRoute";
 import { AppContainer, Container, GlobalStyle } from "./App.styles";
-import {
-  loginFailure,
-  loginSuccess,
-} from "./state/features/auth/authSlice";
+import { loginFailure, loginSuccess } from "./state/features/auth/authSlice";
 import { RootState, useAppDispatch } from "./state/store";
 import { useSelector } from "react-redux";
 import { Login } from "./Pages/Login/Login";
@@ -16,22 +13,26 @@ import Profile from "./Pages/Profile/Profile";
 import Settings from "./Pages/Settings/Settings";
 import CreatePost from "./Pages/CreatePost/CreatePost";
 import { PageNotFound } from "./Pages/PageNotFound/PageNotFound";
+import axios from "axios";
 
 const App: FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
-  const [loading, setLoading] = useState(false);
-
+  const [loading, isLoading] = useState(true);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    setLoading(true);
-    const userFromLocalStorage = localStorage.getItem("user");
-    if (userFromLocalStorage) {
-      dispatch(loginSuccess(JSON.parse(userFromLocalStorage)));
-    } else {
-      dispatch(loginFailure());
+    const response = axios.get("https://maszaweb.pl:1256/api/auth/verify", {
+      withCredentials: true,
+    });
+    response.then((res) => {
+      dispatch(loginSuccess(res.data));
+      console.log(res.data);
     }
-    setLoading(false);
+    )
+      .catch((err) => {
+        dispatch(loginFailure());
+      });
+    isLoading(false);
   }, [dispatch]);
 
   return (
@@ -40,7 +41,7 @@ const App: FC = () => {
         <GlobalStyle />
 
         {loading ? (
-          <Container>Loading...</Container>
+          <div>Loading</div>
         ) : (
           <>
             <Menu />
@@ -48,13 +49,13 @@ const App: FC = () => {
               <Routes>
                 <Route
                   path="/login"
-                  element={ 
+                  element={
                     <ProtectedRoute isAllowed={!user} redirectPath="/">
                       <Login />
                     </ProtectedRoute>
                   }
                 ></Route>
-               <Route
+                <Route
                   path="/register"
                   element={
                     <ProtectedRoute isAllowed={!user} redirectPath="/">
@@ -70,7 +71,7 @@ const App: FC = () => {
                       redirectPath="/login"
                     >
                       <Home />
-                   </ProtectedRoute> 
+                    </ProtectedRoute>
                   }
                 ></Route>
                 <Route
@@ -102,11 +103,11 @@ const App: FC = () => {
                       isAllowed={user ? true : false}
                       redirectPath="/login"
                     >
-                      <CreatePost/>
+                      <CreatePost />
                     </ProtectedRoute>
                   }
                 ></Route>
-                <Route path="*" element={<PageNotFound/>} />
+                <Route path="*" element={<PageNotFound />} />
               </Routes>
             </Container>
           </>

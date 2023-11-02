@@ -17,12 +17,13 @@ const sendFile = async (file: File) => {
 
   try {
     const response = await axios.post(
-      "http://localhost:8800/api/upload/uploadFile",
+      "https://maszaweb.pl:1256/api/upload/uploadFile",
       formData,
       {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        withCredentials: true,
       }
     );
     return response.data;
@@ -34,7 +35,7 @@ const sendFile = async (file: File) => {
 const updateUser = async (user: IUser) => {
   try {
     const response = await axios.put(
-      "http://localhost:8800/api/users/"+ user._id,
+      "https://maszaweb.pl:1256/api/users/"+ user._id,
       user,
       {
         withCredentials: true,

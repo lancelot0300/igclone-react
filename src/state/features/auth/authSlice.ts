@@ -27,6 +27,7 @@ const initialState: IInitialState = {
       state.user = initialState.user;
     },
     userUpdated: (state, action: PayloadAction<IUser>) => {
+      localStorage.setItem("user", JSON.stringify(action.payload));
       state.user = action.payload;
     }
   },
