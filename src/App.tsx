@@ -18,22 +18,8 @@ import axios from "axios";
 const App: FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const [loading, isLoading] = useState(true);
-  const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    const response = axios.get("https://maszaweb.pl:1256/api/auth/verify", {
-      withCredentials: true,
-    });
-    response.then((res) => {
-      dispatch(loginSuccess(res.data));
-      console.log(res.data);
-    }
-    )
-      .catch((err) => {
-        dispatch(loginFailure());
-      });
-    isLoading(false);
-  }, [dispatch]);
+ 
 
   return (
     <>

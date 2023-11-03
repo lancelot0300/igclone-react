@@ -1,11 +1,11 @@
 import { FC } from "react";
 import styled from "styled-components";
 import Like from "../Like/Like";
+import { ILike } from "../../interfaces/interfaces";
 
 interface IProps {
-  likesCount: number;
+  likes: ILike[] | undefined;
   handleClick: () => void;
-  liked: boolean;
 }
 
 const StyledLikes = styled.div`
@@ -20,12 +20,15 @@ const StyledLikes = styled.div`
     }
 `;
 
-const Likes: FC<IProps> = ({ likesCount, handleClick, liked}) => {
+const Likes: FC<IProps> = ({ handleClick}) => {
+  const likesCount = 0;
+  const liked = false;
+
 
 
   return (
     <StyledLikes>
-      <Like isLiked={liked} onClick={ handleClick}></Like>
+      <Like isLiked={liked} onClick={handleClick}></Like>
       <p>{likesCount} <b>Likes</b></p>
     </StyledLikes>
   );

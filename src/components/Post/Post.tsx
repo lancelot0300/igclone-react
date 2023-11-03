@@ -7,6 +7,7 @@ import Description from "../Description/Description";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store";
 import { useFetch } from "../../hooks/useFetch";
+import axios from "axios";
 // import {useLikes} from "../../hooks/useLikes";
 
 
@@ -24,10 +25,13 @@ export const Post: FC<IProps> = ({postData}) => {
 
     throw new Error("Function not implemented.");
   }
-  const liked = false;
   const likesCount = likes?.length || 0;
+  const liked = likes?.some((like) => like.userId === user?._id) || false;
   function handleLike(): void {
-    throw new Error("Function not implemented.");
+    const response = axios(`https://maszaweb.pl:1256/api/posts/likePost/${postData._id}`, {
+      method: "PUT",
+      withCredentials: true,
+    });
   }
 
   const { data } = useFetch<IUser>(`/users/getUser/${postData.userId}`);
@@ -41,7 +45,7 @@ export const Post: FC<IProps> = ({postData}) => {
         <span>{displayName || email }</span>
       </StyledUser>
       <Image src={photo} onClick={handleDoubleLike} alt="test"/>
-      <Likes likesCount={likesCount} handleClick={handleLike}  liked={liked}/>
+      <Likes likes={likes} handleClick={handleLike} />
       <Description userName={displayName|| email || ""} desc={desc}></Description>
     </StyledPost>
   );
