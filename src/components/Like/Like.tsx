@@ -4,6 +4,7 @@ import styled from "styled-components";
 interface IProps {
     isLiked: boolean;
     onClick: () => void;
+    disabled?: boolean;
 }
 
 interface IHeart {
@@ -38,9 +39,16 @@ const Heart = styled.svg<IHeart>`
     `}
 `;
 
-const Like:FC<IProps> = ({isLiked, onClick}) => {
+const Like:FC<IProps> = ({isLiked, onClick, disabled}) => {
+
+    const handleClick = () => {
+        if (!disabled) {
+          onClick();
+        }
+      };
+
   return (
-    <Heart onClick={onClick} liked={isLiked} viewBox="0 0 32 29.6">
+    <Heart onClick={handleClick} liked={isLiked} viewBox="0 0 32 29.6">
       <path
         d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2
 	c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"

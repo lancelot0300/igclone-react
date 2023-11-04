@@ -8,7 +8,7 @@ interface IInitialState {
 
 
 const initialState: IInitialState = {
-  user: null,
+  user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")!) : null,
 };
 
  const authSlice = createSlice({
@@ -20,11 +20,12 @@ const initialState: IInitialState = {
       state.user = action.payload;
     },
     loginFailure: (state) => {
-      state.user = initialState.user;
+      state.user = null;
+      
     },
     logout: (state) => {
       localStorage.removeItem("user");
-      state.user = initialState.user;
+      state.user = null
     },
     userUpdated: (state, action: PayloadAction<IUser>) => {
       localStorage.setItem("user", JSON.stringify(action.payload));

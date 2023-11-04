@@ -17,31 +17,13 @@ import axios from "axios";
 
 const App: FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
-  const [loading, isLoading] = useState(true);
-  const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    const response = axios.get(process.env.REACT_APP_FETCH_APP + "/auth/verify", {
-      withCredentials: true,
-    });
-    response.then((res) => {
-      dispatch(loginSuccess(res.data));
-    }
-    )
-      .catch((err) => {
-        dispatch(loginFailure());
-      });
-    isLoading(false);
-  }, [dispatch]);
+
 
   return (
     <>
       <AppContainer>
         <GlobalStyle />
-
-        {loading ? (
-          <div>Loading</div>
-        ) : (
           <>
             <Menu />
             <Container>
@@ -65,23 +47,13 @@ const App: FC = () => {
                 <Route
                   path="/"
                   element={
-                    <ProtectedRoute
-                      isAllowed={user ? true : false}
-                      redirectPath="/login"
-                    >
                       <Home />
-                    </ProtectedRoute>
                   }
                 ></Route>
                 <Route
                   path="/profile/:id"
                   element={
-                    <ProtectedRoute
-                      isAllowed={user ? true : false}
-                      redirectPath="/login"
-                    >
                       <Profile/>
-                    </ProtectedRoute>
                   }
                 ></Route>
                 <Route
@@ -110,7 +82,6 @@ const App: FC = () => {
               </Routes>
             </Container>
           </>
-        )}
       </AppContainer>
     </>
   );

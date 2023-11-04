@@ -7,47 +7,14 @@ import {
 } from "../../components/Input/Input.styles";
 import { Button } from "../../components/Button/Button";
 import { Form } from "../../components/Form/Form";
-import * as yup from "yup";
 import { IPost } from "../../interfaces/interfaces";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { useMutation } from "react-query";
-import axios from "axios";
-
-const sendFile = async (file: File) => {
-  const formData = new FormData();
-  formData.append("image", file);
-
-  try {
-    const response = await axios.post(
-      process.env.REACT_APP_FETCH_APP + "/upload/uploadFile",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        withCredentials: true,
-      }
-    );
-    return response.data;
-  } catch (error) {
-    throw new Error("Uploading photo faild"); // Handle the error appropriately
-  }
-};
-
-const createPost = async (post: IPost) => {
-  try {
-    const response = await axios.post(
-      process.env.REACT_APP_FETCH_APP  + "/posts/createPost",
-      post
-    );
-    return response.data;
-  } catch (error) {
-    throw new Error("Adding post failed"); // Handle the error appropriately
-  }
-};
+import { createPost, sendFile } from "../../api/api";
+import { CreatePostSchema, isValidFileType } from "../../scheama/createPostSchema";
 
 const CreatePost = () => {
   const [wait, setWait] = useState(false);
@@ -56,26 +23,7 @@ const CreatePost = () => {
   const navigate = useNavigate();
   const fileMutation = useMutation(sendFile);
   const postMutation = useMutation(createPost);
-  const MAX_FILE_SIZE = 5242880; //5MB
-  const validFileExtensions = [
-    "jpg",
-    "gif",
-    "png",
-    "jpeg",
-    "svg",
-    "webp",
-    "bmp",
-    "heif",
-    "heic",
-  ];
-
-  const isValidFileType = (fileName: string, fileType: string) => {
-    const extension = fileName.split(".").pop();
-    return (
-      validFileExtensions.includes(extension || "") &&
-      fileType.startsWith("image/")
-    );
-  };
+ 
 
   interface FormValues {
     desc: string;
@@ -109,22 +57,7 @@ const CreatePost = () => {
       desc: "",
       photo: undefined,
     },
-    validationSchema: yup.object({
-      desc: yup.string().required("Description is required"),
-      photo: yup
-        .mixed()
-        .required("Photo is required")
-        .test(
-          "is-valid-type",
-          "Not a valid image type",
-          (value) => value && isValidFileType(value.name, value.type)
-        )
-        .test(
-          "is-valid-size",
-          "File size is too large",
-          (value) => value && value.size <= MAX_FILE_SIZE
-        ),
-    }),
+    validationSchema: CreatePostSchema,
     onSubmit,
   });
 
@@ -142,6 +75,8 @@ const CreatePost = () => {
       </>
     );
   };
+
+
   return (
     <>
       <Form onSubmit={handleSubmit}>

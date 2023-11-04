@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const StyledPost = styled.div`
   margin: 50px auto;
-  width: 600px;
+  width: 550px;
   border-radius: 5px;
   background-color: #3c3b3b;
   color: #000;
@@ -13,7 +13,7 @@ export const StyledPost = styled.div`
   flex-direction: column;
 
   img {
-    max-height: 80svh;
+    max-height: 75svh;
     width: 100%;
     object-fit: cover;
     object-position: center;

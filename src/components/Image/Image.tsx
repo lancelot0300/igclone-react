@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import React, { forwardRef, useEffect, useState, Ref, MouseEvent } from "react";
 
 interface IProps {
   src: string;
@@ -6,12 +6,36 @@ interface IProps {
   width?: string | number;
   height?: string | number;
   className?: string;
-  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
+  onClick?: (event: MouseEvent<HTMLImageElement>) => void;
+  setLiked?: (liked: boolean) => void;
+  onLikeFunc?: () => void;
 }
 
+const Image = forwardRef<HTMLImageElement, IProps>(
+  ({ src, alt, onClick, setLiked, onLikeFunc, ...props }: IProps, ref: Ref<HTMLImageElement>) => {
+    const [lastClickTime, setLastClickTime] = useState(0);
 
-const Image = forwardRef<HTMLImageElement, IProps>(({src, alt, ...props}, ref,) => {
-  return <img src={src} alt={alt} { ...props} ref={ref}/>
-});
+    const handleLikeClick = (event: MouseEvent<HTMLImageElement>) => {
+      const clickTime = new Date().getTime();
+      const timeSinceLastClick = clickTime - lastClickTime;
+
+      if (timeSinceLastClick < 300) {
+        // Handle double-click (time interval less than 300ms)
+        if (onLikeFunc) {
+          onLikeFunc();
+        }
+      }
+      
+      // Update the last click time
+      setLastClickTime(clickTime);
+
+      if (onClick) {
+        onClick(event);
+      }
+    };
+
+    return <img src={src} alt={alt} onClick={handleLikeClick} {...props} ref={ref} />;
+  }
+);
 
 export default Image;
