@@ -11,7 +11,7 @@ export const useFetch = <T>(url: string) => {
             const res = await axios.get(process.env.REACT_APP_FETCH_APP + url)
             return res.data as T
         },
-        refetchOnWindowFocus: true,
+        refetchOnWindowFocus: false,
         refetchOnMount: true,
         refetchOnReconnect: false,
     })

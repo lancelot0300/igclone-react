@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { ProfileImages } from "../../components/ProfileImages/ProfileImages";
-import { IData } from "../../interfaces/interfaces";
+import { IPostResponse, IProfile } from "../../interfaces/interfaces";
+import { useFetch } from "../../hooks/useFetch";
 
 const User = styled.div`
   display: flex;
@@ -51,38 +51,32 @@ const Posts = styled.div`
 `;
 
 const Profile = () => {
-  let { id } = useParams();
-  const [userPosts, setUserPosts] = useState<IData[]>([]);
-  const postsState: IData[] = [];
+  const { id } = useParams();
+  const profileData = useFetch<IProfile>("/profile/" + id);
 
-  useEffect(() => {
-    const userPosts = postsState.filter((post) => post.data);
-    setUserPosts(userPosts);
-    return () => {
-      setUserPosts([]);
-    };
-  }, [id]);
 
-  if (!postsState) return <h1>Loadig...</h1>;
-  if (!userPosts) return <h1>Fetching User Posts...</h1>;
-  if (!userPosts[0]) return <h1>No Posts or User</h1>;
+  if (!profileData.data) {
+    return <div>Loading...</div>;
+  }
+
+  const {user, posts} = profileData.data
 
   return (
     <>
       <User>
-        {/* <img
-          src={userPosts[0].data.userPhoto}
+        <img
+          src={user.photoURL}
           alt="avatar"
           width={150}
           height={150}
         />
-        <h2>{userPosts[0].data.userName}</h2> */}
-        <p>Posty: {userPosts.length}</p>
+        <h2>{user.displayName || user.email}</h2>
+        <p>Posty: {posts.length}</p>
       </User>
       <Posts>
-        {/* {userPosts.map((post, index) => (
-          <ProfileImages key={index} data={post} />
-        ))} */}
+        {posts.map((post : IPostResponse) => (
+          <ProfileImages key={post._id} post={post} />
+        ))}
       </Posts>
     </>
   );

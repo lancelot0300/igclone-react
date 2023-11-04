@@ -1,5 +1,5 @@
 import { FC} from "react";
-import { IData, IPost, IPostResponse, IUser} from "../../interfaces/interfaces";
+import { IPost, IPostResponse, IUser} from "../../interfaces/interfaces";
 import { StyledPost, StyledUser} from "./Post.styles";
 import Image from "../Image/Image";
 import Likes from "../Likes/Likes";
@@ -26,7 +26,7 @@ export const Post: FC<IProps> = ({postData}) => {
     throw new Error("Function not implemented.");
   }
   const likesCount = likes?.length || 0;
-  const liked = likes?.some((like) => like.userId === user?._id) || false;
+  const liked = likes?.some((like) => like.userID === user?._id) || false;
   function handleLike(): void {
     const response = axios(`https://maszaweb.pl:1256/api/posts/likePost/${postData._id}`, {
       method: "PUT",
@@ -34,7 +34,7 @@ export const Post: FC<IProps> = ({postData}) => {
     });
   }
 
-  const { data } = useFetch<IUser>(`/users/getUser/${postData.userId}`);
+  const { data } = useFetch<IUser>(`/users/getUser/${postData.userID}`);
   const { photoURL, displayName, email } = data || {};
 
   // const {liked, likesCount, handleLike, handleDoubleLike } = useLikes(likes, postData.id, user?.uid);

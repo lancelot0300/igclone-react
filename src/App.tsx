@@ -80,7 +80,7 @@ const App: FC = () => {
                       isAllowed={user ? true : false}
                       redirectPath="/login"
                     >
-                      <Profile></Profile>
+                      <Profile/>
                     </ProtectedRoute>
                   }
                 ></Route>

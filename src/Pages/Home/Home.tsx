@@ -1,5 +1,5 @@
 import { FC, useEffect } from "react";
-import { IData, IPost, IPostResponse } from "../../interfaces/interfaces";
+import { IPostResponse } from "../../interfaces/interfaces";
 import { Post } from "../../components/Post/Post";
 import { useFetch } from "../../hooks/useFetch";
 

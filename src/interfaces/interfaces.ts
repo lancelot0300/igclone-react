@@ -1,23 +1,16 @@
-export interface IData {
-  data: IPostResponse[];
-  id: string;
-}
 
 export interface IComment {
   _id: string;
   text: string;
-  user: string;
-  userName: string;
-  userPhoto: string;
-  createdAt: string;
+  userID: string;
 }
 
 export interface IPostResponse {
   desc: string;
-  userId: string;
+  userID: string;
   photo: string;
-  likes?: ILike[];
-  comments?: IComment[];
+  likes: ILike[];
+  comments: IComment[];
   _id: string;
 }
 
@@ -28,12 +21,17 @@ export interface IPost {
 }
 
 export interface ILike {
-  userId: string;
+  userID: string;
 }
 
 export interface IUser {
-  photoURL: string;
+  photoURL?: string;
   displayName?: string | null;
   _id: string;
-  email: string | null;
+  email: string;
+}
+
+export interface IProfile {
+  posts: IPostResponse[];
+  user: IUser
 }
