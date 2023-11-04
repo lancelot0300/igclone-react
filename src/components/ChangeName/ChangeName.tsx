@@ -38,7 +38,7 @@ const StyledWrapper = styled.div`
 const updateUser = async (user: IUser) => {
   try {
     const response = await axios.put(
-      "https://maszaweb.pl:1256/api/users/"+ user._id,
+      process.env.REACT_APP_FETCH_APP  + "/users/"+ user._id,
       user,
       {
         withCredentials: true,

@@ -22,7 +22,7 @@ const sendFile = async (file: File) => {
 
   try {
     const response = await axios.post(
-      "https://maszaweb.pl:1256/api/upload/uploadFile",
+      process.env.REACT_APP_FETCH_APP + "/upload/uploadFile",
       formData,
       {
         headers: {
@@ -40,7 +40,7 @@ const sendFile = async (file: File) => {
 const createPost = async (post: IPost) => {
   try {
     const response = await axios.post(
-      "https://maszaweb.pl:1256/api/posts/createPost",
+      process.env.REACT_APP_FETCH_APP  + "/posts/createPost",
       post
     );
     return response.data;

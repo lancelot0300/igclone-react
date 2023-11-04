@@ -17,7 +17,7 @@ const sendFile = async (file: File) => {
 
   try {
     const response = await axios.post(
-      "https://maszaweb.pl:1256/api/upload/uploadFile",
+      process.env.REACT_APP_FETCH_APP + "/upload/uploadFile",
       formData,
       {
         headers: {
@@ -35,7 +35,7 @@ const sendFile = async (file: File) => {
 const updateUser = async (user: IUser) => {
   try {
     const response = await axios.put(
-      "https://maszaweb.pl:1256/api/users/"+ user._id,
+      process.env.REACT_APP_FETCH_APP + "/users/"+ user._id,
       user,
       {
         withCredentials: true,
