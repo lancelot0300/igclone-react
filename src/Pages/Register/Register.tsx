@@ -3,15 +3,23 @@ import { Button } from "../../components/Button/Button";
 import { Form } from "../../components/Form/Form";
 import { FormLink, StyledMessage } from "../../components/Form/Form.style";
 import * as yup from "yup";
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 import { useFormik } from "formik";
 import { StyledInput } from "../../components/Input/Input.styles";
+import { loginSuccess } from "../../state/features/auth/authSlice";
+import { useNavigate } from "react-router-dom";
+import { useMutation } from "react-query";
+import { registerUser } from "../../api/api";
+import { useAppDispatch } from "../../state/store";
+
 
 export const Register: FC = () => {
   const [wait, setWait] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const mutation = useMutation(registerUser);
   const schema = yup.object().shape({
-    login: yup.string().email("Invalid email format").required("Required"),
+    email: yup.string().email("Invalid email format").required("Required"),
     password: yup
       .string()
       .min(8, "Password must be at least 8 characters")
@@ -23,23 +31,30 @@ export const Register: FC = () => {
   });
 
   interface FormValues {
-    login: string;
+    email: string;
     password: string;
     confirmPassword: string;
   }
 
-  const onSubmit = async ({ login, password }: FormValues) => {
-    // setWait(true);
-    // await createUserWithEmailAndPassword(auth, login, password).catch((err) =>
-    //   setErrors({ confirmPassword: err.message })
-    // );
-    // setWait(false);
+  const onSubmit = async ({ email, password }: FormValues) => {
+    setWait(true);
+    const res = await mutation.mutateAsync({ email, password }).catch((err) => {
+      setWait(false);
+      setErrors({ email: err.message });
+    });
+
+    if (!res) return;
+
+    console.log(res);
+    setWait(false);
+    dispatch(loginSuccess(res));
+    navigate("/");
   };
 
   const { values, errors, touched, setErrors, handleChange, handleSubmit } =
     useFormik<FormValues>({
       initialValues: {
-        login: "",
+        email: "",
         password: "",
         confirmPassword: "",
       },
@@ -52,13 +67,13 @@ export const Register: FC = () => {
       <StyledInput
         type="email"
         placeholder="Email"
-        name="login"
-        value={values.login}
+        name="email"
+        value={values.email}
         onChange={handleChange}
-        $isError={errors.login && touched.login ? true : false}
+        $isError={errors.email && touched.email ? true : false}
       />
-      <ErrorMessage $isError={errors.login ? true : false}>
-        {touched.login ? errors.login : ""}
+      <ErrorMessage $isError={errors.email ? true : false}>
+        {touched.email ? errors.email : ""}
       </ErrorMessage>
       <StyledInput
         type="password"
@@ -93,3 +108,4 @@ export const Register: FC = () => {
     </Form>
   );
 };
+

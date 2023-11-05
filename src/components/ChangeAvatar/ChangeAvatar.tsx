@@ -28,7 +28,7 @@ const sendFile = async (file: File) => {
     );
     return response.data;
   } catch (error) {
-    throw new Error("Failed"); // Handle the error appropriately
+    throw new Error("Failed while uploading photo");
   }
 };
 
@@ -43,7 +43,7 @@ const updateUser = async (user: IUser) => {
     );
     return response.data;
   } catch (error) {
-    throw new Error("Login failed"); // Handle the error appropriately
+    throw new Error("Faild updating photo");
   }
 };
 
@@ -106,19 +106,30 @@ const ChangeAvatar: FC<IProps> = ({ user }) => {
     })
     if (!response) return;
 
-    const res = await fileMutation.mutateAsync(file);
+    const res = await fileMutation.mutateAsync(file).catch((err) => {
+      setError(err.message);
+      setLoading(false);
+    });
+
+    if (!res) return;
 
     const updatedUser = {
       ...user,
       photoURL: res.fileUrl,
     };
-    const res2 = await updateUserMutation.mutateAsync(updatedUser);
+    const res2 = await updateUserMutation.mutateAsync(updatedUser).catch((err) => {
+      setError(err.message);
+      setLoading(false);
+    });
+
+    if (!res2) return;
+
     dispatch(userUpdated(res2));
     setLoading(false);
   };
 
   return (
-      <FileDropArea>
+      <FileDropArea $isError={error ? true : false}>
         <FileMessage $isError={error ? true : false} >{error ? error : "Drag and drop to change"}</FileMessage>
         <FileInput disabled={loading} placeholder="a" type="file" name="avatar" onChange={handleChange} />
       </FileDropArea>

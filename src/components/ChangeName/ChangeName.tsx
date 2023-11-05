@@ -46,7 +46,7 @@ const updateUser = async (user: IUser) => {
     );
     return response.data;
   } catch (error) {
-    throw new Error("Login failed"); // Handle the error appropriately
+    throw new Error("Faild to update username");
   }
 };
 
@@ -77,7 +77,13 @@ const ChangeName: FC<IProps> = ({ user }) => {
       return setWait(false);
     }
 
-    const res = await mutation.mutateAsync(updatedUser);
+    const res = await mutation.mutateAsync(updatedUser)
+    .catch((err) => {
+      setError(err.message);
+      setWait(false);
+    });
+    if(!res) return;
+    
     dispatch(userUpdated(res))
     setMessage("Name changed")
     setWait(false);

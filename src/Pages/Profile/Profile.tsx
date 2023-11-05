@@ -61,20 +61,22 @@ const Profile = () => {
 
   const {user, posts} = profileData.data
 
+  console.log(posts);
+
   return (
     <>
       <User>
         <img
-          src={user.photoURL}
+          src={user?.photoURL}
           alt="avatar"
           width={150}
           height={150}
         />
-        <h2>{user.displayName || user.email}</h2>
-        <p>Posty: {posts.length}</p>
+        <h2>{user?.displayName || user?.email}</h2>
+        <p>Posty: {posts?.length || 0}</p>
       </User>
       <Posts>
-        {posts.map((post : IPostResponse) => (
+        {posts?.map((post : IPostResponse) => (
           <ProfileImages key={post._id} post={post} />
         ))}
       </Posts>

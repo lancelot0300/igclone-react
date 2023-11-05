@@ -36,7 +36,6 @@ const CreatePost = () => {
     const res = await fileMutation.mutateAsync(photo);
     const post: IPost = {
       desc,
-      userId: user._id,
       photo: res.fileUrl,
     };
     await postMutation.mutateAsync(post);

@@ -21,7 +21,6 @@ const initialState: IInitialState = {
     },
     loginFailure: (state) => {
       state.user = null;
-      
     },
     logout: (state) => {
       localStorage.removeItem("user");

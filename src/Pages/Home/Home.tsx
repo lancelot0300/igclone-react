@@ -6,22 +6,25 @@ import { useFetch } from "../../hooks/useFetch";
 
 export const Home: FC = () => {
 
-  const {data, refetch} = useFetch<IPostResponse[]>("/posts");
+  const {data, error} = useFetch<IPostResponse[]>("/posts");
 
-    useEffect(() => {
-      refetch();
-    }
-    , [refetch]);
+  if(error) {
+    return <h1>Something went wrong</h1>
+  }
 
-  const renderPosts = (posts: IPostResponse[]) => {
-      return posts.map((post) => {
-        return <Post postData={post} key={post._id} />;
-      });
-  };
+  if(!data) {
+    return <h1>Loading...</h1>
+  }
+
+  if(data.length === 0) {
+    return <h1>No posts</h1>
+  }
 
   return (
     <>
-      {data ? renderPosts(data) : <h1>Loading...</h1>}
+      {data.map((post) => {
+        return <Post postData={post} key={post._id} />;
+      })}
     </>
   );
 };

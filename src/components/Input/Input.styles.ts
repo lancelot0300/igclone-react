@@ -23,16 +23,12 @@ export const FileDropArea = styled.div<IInputErrorProps>`
   max-width: 100%;
   padding: 25px;
   border: 1px dashed rgba(255, 255, 255, 0.4);
+  border-color: ${(props) => (props.$isError ? "red" : "rgba(255, 255, 255, 0.4)")};
   border-radius: 3px;
   transition: 0.2s;
   &.is-active {
     background-color: rgba(255, 255, 255, 0.05);
   }
-  ${(props) =>
-    props.$isError &&
-    `
-   border-color: red;
-  `}
 `;
 
 

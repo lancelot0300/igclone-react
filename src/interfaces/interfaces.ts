@@ -1,13 +1,18 @@
 
 export interface IComment {
   _id: string;
-  text: string;
-  userID: string;
+  comment: string;
+  user?: {
+    _id: string;
+    displayName?: string;
+    photoURL: string;
+    email: string;
+  };
 }
 
 export interface IPostResponse {
   desc: string;
-  userID: string;
+  user: string;
   photo: string;
   likes: string[];
   comments: IComment[];
@@ -16,7 +21,6 @@ export interface IPostResponse {
 
 export interface IPost {
   desc: string;
-  userId: string;
   photo: string;
 }
 
@@ -28,6 +32,6 @@ export interface IUser {
 }
 
 export interface IProfile {
-  posts: IPostResponse[];
-  user: IUser
+  posts?: IPostResponse[];
+  user?: IUser
 }
