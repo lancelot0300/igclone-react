@@ -55,7 +55,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           {...rest}
         />
           <ErrorMessage $isError={errorMessage && isTouched}>
-            {errorMessage}
+            {isTouched ? errorMessage  : "" }
           </ErrorMessage>
       </>
     );
