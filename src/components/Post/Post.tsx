@@ -9,8 +9,8 @@ import { RootState } from "../../state/store";
 import { useFetch } from "../../hooks/useFetch";
 import axios from "axios";
 import styled from "styled-components";
-import { useTwoFetches } from "../../hooks/useTwoFetches";
 import Comments from "../Comments/Comments";
+import { Link } from "react-router-dom";
 
 interface IProps {
   postData: IPostResponse;
@@ -73,10 +73,9 @@ const AddComment = styled.div`
 
 export const Post: FC<IProps> = ({ postData }) => {
   const { user } = useSelector((state: RootState) => state.auth);
-  const { photo, desc, likes, user: userRef, _id } = postData;
-  const { data: userData } = useFetch<IUser>(`/users/${userRef}`);
+  const { photo, desc, likes, _id } = postData;
 
-  const { photoURL, displayName, email } = userData || {};
+  const { photoURL, displayName, email } = postData.user;
 
   const initialLiked = likes.some((like) => like === user?._id);
   const [liked, setLiked] = useState(initialLiked);
@@ -86,7 +85,7 @@ export const Post: FC<IProps> = ({ postData }) => {
 
   const commentRef = useRef<HTMLInputElement>(null);
 
-  const [comments, setComments] = useState<IComment[]>([]);
+  const [comments, setComments] = useState<IComment[]>(postData.comments);
 
   const handleLikeClick = async () => {
     const newLikesCount = liked ? likesCount - 1 : likesCount + 1;
@@ -94,9 +93,13 @@ export const Post: FC<IProps> = ({ postData }) => {
     setLiked(!liked);
 
     try {
-      await axios.put(process.env.REACT_APP_FETCH_APP  + `/posts/likePost/${_id}`, null, {
-        withCredentials: true,
-      });
+      await axios.put(
+        process.env.REACT_APP_FETCH_APP + `/posts/likePost/${_id}`,
+        null,
+        {
+          withCredentials: true,
+        }
+      );
     } catch (error) {
       setLiked(initialLiked);
       setLikesCount(likesCount);
@@ -119,13 +122,13 @@ export const Post: FC<IProps> = ({ postData }) => {
           displayName: user?.displayName,
           email: user?.email,
         },
-        _id: Math.random().toString()
+        _id: Math.random().toString(),
       },
     ];
     setComments(newComments as IComment[]);
     try {
       await axios.put(
-        process.env.REACT_APP_FETCH_APP  + `/posts/commentPost/${postData._id}`,
+        process.env.REACT_APP_FETCH_APP + `/posts/commentPost/${postData._id}`,
         { comment },
         {
           withCredentials: true,
@@ -138,11 +141,15 @@ export const Post: FC<IProps> = ({ postData }) => {
 
   return (
     <>
+      {console.log(postData)}
       <StyledPost>
         <StyledUser>
-          <Image width="50px" height="50px" src={photoURL || ""} alt="user" />
+          <Link to={`/profile/${postData.user._id}`}>
+            <Image width="50px" height="50px" src={photoURL || ""} alt="user" />
+          </Link>
           <span>{displayName || email}</span>
         </StyledUser>
+
         <Image
           src={photo}
           onLikeFunc={handleLikeClick}
@@ -156,16 +163,14 @@ export const Post: FC<IProps> = ({ postData }) => {
             handleClick={handleLikeClick}
             disabled={!user}
           />
-         { user && <AddCommentButton onClick={handleOpenComments}>
-            {isOpenComments ? "Close Add Comment" : "Add Comment"}
-          </AddCommentButton>}
+          {user && (
+            <AddCommentButton onClick={handleOpenComments}>
+              {isOpenComments ? "Close Add Comment" : "Add Comment"}
+            </AddCommentButton>
+          )}
         </Options>
         <Description userName={displayName || email || ""} desc={desc} />
-        <Comments
-          postID={postData._id}
-          comments={comments}
-          setComments={setComments}
-        />
+        <Comments comments={comments} />
         {isOpenComments && (
           <AddComment>
             <input ref={commentRef} type="text" placeholder="Add comment..." />

@@ -12,7 +12,7 @@ export interface IComment {
 
 export interface IPostResponse {
   desc: string;
-  user: string;
+  user: IUser;
   photo: string;
   likes: string[];
   comments: IComment[];

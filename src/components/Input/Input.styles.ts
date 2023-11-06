@@ -2,7 +2,7 @@ import { Input } from "./Input";
 import styled from "styled-components";
 
 interface IInputErrorProps{
-  $isError?: boolean;
+  $isError?: boolean | undefined | "";
 }
 
 

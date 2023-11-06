@@ -26,19 +26,11 @@ const Username = styled.span`
 
 
 interface IProps {
-  postID: string;
   comments?: IComment[];
-  setComments: React.Dispatch<React.SetStateAction<IComment[]>>;
 }
 
-const Comments = ({ postID, comments, setComments }: IProps) => {
-  const { data } = useFetch<IComment[]>(`/posts/getComments/${postID}`);
+const Comments = ({ comments}: IProps) => {
 
-  useEffect(() => {
-    if (data && data.length > 0) {
-      setComments(data);
-    }
-  }, [data, setComments]);
 
   return (
     <StyledComments>

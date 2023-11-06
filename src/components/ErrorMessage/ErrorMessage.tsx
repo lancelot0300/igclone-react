@@ -4,11 +4,11 @@ import styled from 'styled-components'
 interface IProps {
     children: string | undefined
     className?: string
-    $isError: boolean
+    $isError?: boolean | undefined | ""
 }
 
 interface IInputErrorProps{
-  $isError?: boolean;
+  $isError?: boolean | undefined | "";
 }
 
 const StyledErrorMessage = styled.span<IInputErrorProps>`
@@ -21,7 +21,12 @@ const StyledErrorMessage = styled.span<IInputErrorProps>`
   color: ${(props) => (props.$isError ? "red" : "white")};
 `;
 
+
+
 const ErrorMessage:FC<IProps> = ({children, className, $isError}) => {
+
+  if(!children) return null
+
   return (
     <StyledErrorMessage $isError={$isError} className={className}>{children}</StyledErrorMessage>
   )

@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/reactcert
 /.pnp
 .pnp.js
 

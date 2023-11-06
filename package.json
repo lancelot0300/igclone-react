@@ -8,6 +8,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "@babel/plugin-proposal-private-property-in-object" :"7.21.11",
     "@types/yup": "^0.32.0",
     "axios": "^1.1.3",
     "caniuse-lite": "^1.0.30001561",
@@ -18,14 +19,13 @@
     "react-query": "^3.39.3",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.4.2",
-    "react-scripts": "5.0.1",
     "styled-components": "^5.3.6",
     "styled-reset": "^4.4.2",
     "web-vitals": "^2.1.4",
     "yup": "^0.32.11"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "HTTPS=true SSL_CRT_FILE=./reactcert/combined_certificate.pem SSL_KEY_FILE=./reactcert/key.pem react-scripts start",
     "start:staging": "env-cmd -f .env react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -56,6 +56,8 @@
     "@types/react-dom": "^18.0.6",
     "@types/react-router-dom": "^5.3.3",
     "@types/styled-components": "^5.1.26",
+    "react-dev-utils": "^12.0.1",
+    "react-scripts": "^5.0.1",
     "typescript": "^4.8.4"
   }
 }

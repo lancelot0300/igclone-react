@@ -70,35 +70,29 @@ export const Register: FC = () => {
         name="email"
         value={values.email}
         onChange={handleChange}
-        $isError={errors.email && touched.email ? true : false}
+        $isError={errors.email && touched.email}
+        isTouched={touched.email}
       />
-      <ErrorMessage $isError={errors.email ? true : false}>
-        {touched.email ? errors.email : ""}
-      </ErrorMessage>
       <StyledInput
         type="password"
         placeholder="Password"
         name="password"
-        autocomplete="off"
+        autoComplete="off"
         value={values.password}
         onChange={handleChange}
-        $isError={errors.password && touched.password ? true : false}
+        $isError={errors.password && touched.password}
+        isTouched={touched.password}
       />
-      <ErrorMessage $isError={errors.password ? true : false}>
-        {touched.password ? errors.password : ""}
-      </ErrorMessage>
       <StyledInput
         type="password"
         placeholder="Confirm Password"
         name="confirmPassword"
-        autocomplete="off"
+        autoComplete="off"
         value={values.confirmPassword}
         onChange={handleChange}
-        $isError={errors.confirmPassword && touched.confirmPassword ? true : false}
+        $isError={errors.confirmPassword && touched.confirmPassword }
+        isTouched={touched.confirmPassword}
       />
-      <ErrorMessage $isError={errors.confirmPassword ? true : false}>
-      {touched.confirmPassword ? errors.confirmPassword : ""}
-      </ErrorMessage>
       <Button disabled={wait} type="submit">
         Register
       </Button>
