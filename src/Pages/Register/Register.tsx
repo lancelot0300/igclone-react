@@ -72,6 +72,7 @@ export const Register: FC = () => {
         onChange={handleChange}
         $isError={errors.email && touched.email}
         isTouched={touched.email}
+        errorMessage={errors.email}
       />
       <StyledInput
         type="password"
@@ -82,6 +83,7 @@ export const Register: FC = () => {
         onChange={handleChange}
         $isError={errors.password && touched.password}
         isTouched={touched.password}
+        errorMessage={errors.password}
       />
       <StyledInput
         type="password"
@@ -92,6 +94,7 @@ export const Register: FC = () => {
         onChange={handleChange}
         $isError={errors.confirmPassword && touched.confirmPassword }
         isTouched={touched.confirmPassword}
+        errorMessage={errors.confirmPassword}
       />
       <Button disabled={wait} type="submit">
         Register
