@@ -8,6 +8,7 @@ import {
   MenuProfileDropdownStyledLink,
 } from "../../Menu.styles";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 interface LoggedDropdownProps {
     dropdownRef: React.RefObject<HTMLDivElement>;
@@ -20,7 +21,15 @@ export const LoggedDropdown: React.FC<LoggedDropdownProps> = ({ dropdownRef, onC
     const { user } = useSelector((state: RootState) => state.auth);
     const navigate = useNavigate();
 
-    const handleLogoutClick = () => {
+    const handleLogoutClick = async () => {
+
+        const response = await axios.post(
+            `${process.env.REACT_APP_FETCH_APP}/auth/logout`,
+            {
+                withCredentials: true,
+            }
+        );
+
         dispatch(logout());
         navigate("/login");
     };

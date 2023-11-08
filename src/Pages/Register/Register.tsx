@@ -45,7 +45,6 @@ export const Register: FC = () => {
 
     if (!res) return;
 
-    console.log(res);
     setWait(false);
     dispatch(loginSuccess(res));
     navigate("/");

@@ -39,7 +39,7 @@ export const Login: FC = () => {
       setLoading(true);
       setStatus("");
       const response = await axios.post(
-        "https://maszaweb.pl:1256/api/auth/login",
+        `${process.env.REACT_APP_FETCH_APP}/auth/login`,
         {
           email: email,
           password: password,

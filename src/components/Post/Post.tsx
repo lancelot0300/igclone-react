@@ -88,6 +88,9 @@ export const Post: FC<IProps> = ({ postData }) => {
   const [comments, setComments] = useState<IComment[]>(postData.comments);
 
   const handleLikeClick = async () => {
+
+    if(!user) return;
+
     const newLikesCount = liked ? likesCount - 1 : likesCount + 1;
     setLikesCount(newLikesCount);
     setLiked(!liked);
@@ -141,7 +144,6 @@ export const Post: FC<IProps> = ({ postData }) => {
 
   return (
     <>
-      {console.log(postData)}
       <StyledPost>
         <StyledUser>
           <Link to={`/profile/${postData.user._id}`}>

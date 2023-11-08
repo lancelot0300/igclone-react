@@ -35,7 +35,7 @@ export const MenuProfile: FC<MenuProfileProps> = () => {
       <MenuProfileImage
         onClick={() => setShowMenu((prev) => !prev)}
         ref={imgRef}
-        src={user?.photoURL || "https://maszaweb.pl:1256/uploads/young-businessman-icon.png"}
+        src={user?.photoURL || "https://maszaweb.pl:8880/uploads/young-businessman-icon.png"}
         alt="profile"
       />
       
