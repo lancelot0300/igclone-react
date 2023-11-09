@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useReducer, useRef, useState } from "react";
 import { IComment, IPostResponse, IUser } from "../../interfaces/interfaces";
 import { StyledPost, StyledUser } from "./Post.styles";
 import Image from "../Image/Image";
@@ -36,64 +36,29 @@ const AddCommentButton = styled.button`
   }
 `;
 
-const AddComment = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  position: relative;
-
-  input {
-    width: 100%;
-    height: 30px;
-    border: none;
-    outline: none;
-    border-radius: 5px;
-    padding: 0 10px;
-  }
-
-  button {
-    width: 30px;
-    height: 30px;
-    background-color: transparent;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    position: absolute;
-    right: 25px;
-    color: black;
-    transition: all 0.3s ease-in-out;
-
-    &:hover {
-      color: rgb(0, 149, 246);
-    }
-  }
-`;
-
 export const Post: FC<IProps> = ({ postData }) => {
   const { user } = useSelector((state: RootState) => state.auth);
   const { photo, desc, likes, _id } = postData;
 
   const { photoURL, displayName, email } = postData.user;
 
-  const initialLiked = likes.some((like) => like === user?._id);
-  const [liked, setLiked] = useState(initialLiked);
-  const [likesCount, setLikesCount] = useState(likes.length);
+  const [liked, setLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
 
   const [isOpenComments, setIsOpenComments] = useState(false);
 
-  const commentRef = useRef<HTMLInputElement>(null);
-
-  const [comments, setComments] = useState<IComment[]>(postData.comments);
+  useEffect(() => {
+    const initialLiked = likes.some((like) => like === user?._id);
+    setLiked(initialLiked);
+    setLikesCount(likes.length);
+  }, [likes, user]);
 
   const handleLikeClick = async () => {
-
-    if(!user) return;
+    if (!user) return;
 
     const newLikesCount = liked ? likesCount - 1 : likesCount + 1;
     setLikesCount(newLikesCount);
-    setLiked(!liked);
+    setLiked((prev) => !prev);
 
     try {
       await axios.put(
@@ -104,7 +69,7 @@ export const Post: FC<IProps> = ({ postData }) => {
         }
       );
     } catch (error) {
-      setLiked(initialLiked);
+      setLiked((prev) => !prev);
       setLikesCount(likesCount);
     }
   };
@@ -113,37 +78,11 @@ export const Post: FC<IProps> = ({ postData }) => {
     setIsOpenComments(!isOpenComments);
   };
 
-  const handleAddComment = async () => {
-    const comment = commentRef.current?.value;
-    if (!comment) return;
-    const newComments = [
-      ...comments,
-      {
-        comment,
-        user: {
-          _id: user?._id,
-          displayName: user?.displayName,
-          email: user?.email,
-        },
-        _id: Math.random().toString(),
-      },
-    ];
-    setComments(newComments as IComment[]);
-    try {
-      await axios.put(
-        process.env.REACT_APP_FETCH_APP + `/posts/commentPost/${postData._id}`,
-        { comment },
-        {
-          withCredentials: true,
-        }
-      );
-    } catch (error) {
-      setComments(comments);
-    }
-  };
-
   return (
     <>
+    {
+      console.log('render:' + postData._id)
+    }
       <StyledPost>
         <StyledUser>
           <Link to={`/profile/${postData.user._id}`}>
@@ -172,13 +111,7 @@ export const Post: FC<IProps> = ({ postData }) => {
           )}
         </Options>
         <Description userName={displayName || email || ""} desc={desc} />
-        <Comments comments={comments} />
-        {isOpenComments && (
-          <AddComment>
-            <input ref={commentRef} type="text" placeholder="Add comment..." />
-            <button onClick={handleAddComment}>Send</button>
-          </AddComment>
-        )}
+        <Comments postId={postData._id} commentsArr={postData.comments} />
       </StyledPost>
     </>
   );

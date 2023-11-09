@@ -61,8 +61,6 @@ const Profile = () => {
 
   const {user, posts} = profileData.data
 
-  console.log(posts);
-
   return (
     <>
       <User>
