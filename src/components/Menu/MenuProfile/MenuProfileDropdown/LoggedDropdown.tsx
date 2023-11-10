@@ -28,10 +28,16 @@ export const LoggedDropdown: React.FC<LoggedDropdownProps> = ({ dropdownRef, onC
             {
                 withCredentials: true,
             }
-        );
-
+        ).then((response) => {
+            console.log(response);
+        })
+        .catch((error) => {
+           return error;
+        }
+        )
         dispatch(logout());
         navigate("/login");
+
     };
 
     return (

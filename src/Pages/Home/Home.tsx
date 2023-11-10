@@ -6,7 +6,7 @@ import { useFetch } from "../../hooks/useFetch";
 
 export const Home: FC = () => {
 
-  const {data, error} = useFetch<IPostResponse[]>("/posts");
+  const {data, error} = useFetch<IPostResponse[]>("/posts", "posts");
 
   if(error) {
     return <h1>Something went wrong</h1>

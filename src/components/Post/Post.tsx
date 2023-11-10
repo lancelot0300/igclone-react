@@ -6,11 +6,11 @@ import Likes from "../Likes/Likes";
 import Description from "../Description/Description";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store";
-import { useFetch } from "../../hooks/useFetch";
 import axios from "axios";
 import styled from "styled-components";
 import Comments from "../Comments/Comments";
 import { Link } from "react-router-dom";
+import { useQueryClient } from "react-query";
 
 interface IProps {
   postData: IPostResponse;
@@ -37,29 +37,29 @@ const AddCommentButton = styled.button`
 `;
 
 export const Post: FC<IProps> = ({ postData }) => {
+  const queryClient = useQueryClient();
   const { user } = useSelector((state: RootState) => state.auth);
   const { photo, desc, likes, _id } = postData;
 
   const { photoURL, displayName, email } = postData.user;
 
-  const [liked, setLiked] = useState(false);
+  const initialLiked = postData.likes.some((like) => like === user?._id);
+  const [liked, setLiked] = useState(initialLiked);
   const [likesCount, setLikesCount] = useState(0);
 
-  const [isOpenComments, setIsOpenComments] = useState(false);
-
   useEffect(() => {
-    const initialLiked = likes.some((like) => like === user?._id);
-    setLiked(initialLiked);
+    const isLiked = likes.some((like) => like === user?._id);
+    setLiked(isLiked);
     setLikesCount(likes.length);
   }, [likes, user]);
 
   const handleLikeClick = async () => {
     if (!user) return;
-
+  
     const newLikesCount = liked ? likesCount - 1 : likesCount + 1;
     setLikesCount(newLikesCount);
     setLiked((prev) => !prev);
-
+  
     try {
       await axios.put(
         process.env.REACT_APP_FETCH_APP + `/posts/likePost/${_id}`,
@@ -68,21 +68,14 @@ export const Post: FC<IProps> = ({ postData }) => {
           withCredentials: true,
         }
       );
-    } catch (error) {
-      setLiked((prev) => !prev);
-      setLikesCount(likesCount);
-    }
-  };
 
-  const handleOpenComments = () => {
-    setIsOpenComments(!isOpenComments);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <>
-    {
-      console.log('render:' + postData._id)
-    }
       <StyledPost>
         <StyledUser>
           <Link to={`/profile/${postData.user._id}`}>
@@ -104,11 +97,6 @@ export const Post: FC<IProps> = ({ postData }) => {
             handleClick={handleLikeClick}
             disabled={!user}
           />
-          {user && (
-            <AddCommentButton onClick={handleOpenComments}>
-              {isOpenComments ? "Close Add Comment" : "Add Comment"}
-            </AddCommentButton>
-          )}
         </Options>
         <Description userName={displayName || email || ""} desc={desc} />
         <Comments postId={postData._id} commentsArr={postData.comments} />
