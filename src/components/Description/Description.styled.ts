@@ -10,10 +10,14 @@ export const StyledUserName = styled.span`
 `;
 
 export const StyledDescription = styled.div<IDescription>`
-  padding: 0 10px;
+  padding: 0 10px 5px;
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
   p {
     margin: 0;
   }
@@ -43,4 +47,14 @@ export const LookMoreBtn = styled.button`
     text-decoration: underline;
   }
 
+`;
+
+export const StyledProfileLogo = styled.img`
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  overflow: hidden;
+  margin-right: 5px;
 `;

@@ -2,25 +2,15 @@ import styled from "styled-components";
 
 export const StyledPost = styled.div`
   margin: 50px auto;
-  width: 550px;
+  max-width: 500px;
   border-radius: 5px;
-  background-color: #3c3b3b;
+  background-color: #e8e8e8;
   color: #000;
   object-fit: cover;
   object-position: center;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-
-  img {
-    max-height: 75svh;
-    width: 100%;
-    object-fit: cover;
-    object-position: center;
-    overflow: hidden;
-    
-  }
-
 
   @media (max-width: 768px) {
     width: 90vw;
@@ -34,8 +24,8 @@ export const StyledUser = styled.div`
   padding: 10px;
 
   img {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     object-fit: cover;
     object-position: center;
@@ -44,7 +34,7 @@ export const StyledUser = styled.div`
   }
 
   span {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 700;
   }
 `;

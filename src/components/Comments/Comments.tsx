@@ -1,36 +1,41 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useFetch } from "../../hooks/useFetch";
-import { IComment } from "../../interfaces/interfaces";
+import { IComment, IPostResponse } from "../../interfaces/interfaces";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store";
+import { useQueryClient } from "react-query";
+import { StyledProfileLogo } from "../Description/Description.styled";
 
 const StyledComments = styled.div`
   width: 100%;
-  background-color: rgb(60, 59, 59);
+  background-color: #e8e8e8;
   padding: 10px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: center;
   gap: 2px;
 `;
 
 const StyledComment = styled.div`
   width: 100%;
   height: 30px;
-  background-color: rgb(60, 59, 59);
-  color: white;
+  background-color: #e8e8e8;
+  color: black;
+  position: relative;
+  display: flex;
+  align-items: center;
 `;
 
 const Username = styled.span`
-    font-weight: 600;
-    `;
+  font-weight: 600;
+`;
 
-    const AddComment = styled.div`
+const AddComment = styled.div`
   width: 100%;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   position: relative;
 
@@ -61,43 +66,46 @@ const Username = styled.span`
   }
 `;
 
+const RemoveButton = styled.button`
+  width: 30px;
+  height: 30px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  position: absolute;
+  right: 5px;
+  color: black;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    color: rgb(0, 149, 246);
+  }
+`;
+
+const StyledTrash = styled.img`
+  width: 15px;
+  cursor: pointer;
+  background-color: transparent;
+`;
+
 interface IProps {
   commentsArr?: IComment[];
   postId: string;
 }
 
-const Comments = ({ commentsArr, postId}: IProps) => {
-
-  const [comments, setComments] = useState<IComment[]>([]);
+const Comments = ({ commentsArr, postId }: IProps) => {
+  const [comments, setComments] = useState<IComment[]>(commentsArr || []);
   const commentRef = useRef<HTMLInputElement>(null);
   const { user } = useSelector((state: RootState) => state.auth);
-
-  useEffect(() => {
-    if(commentsArr) {
-      setComments(commentsArr);
-    }
-  }, [commentsArr]);
+  const queryClient = useQueryClient();
 
   const handleAddComment = async () => {
     const comment = commentRef.current?.value;
     if (!comment) return;
 
-    const newComment: IComment = {
-      comment,
-      user: {
-        _id: user?._id || "",
-        displayName: user?.displayName || "",
-        email: user?.email || "",
-        photoURL: user?.photoURL || "",
-      },
-      _id: Math.random().toString(),
-    };
-
-    setComments([...comments, newComment]);
-    commentRef.current!.value = "";
-    
     try {
-      await axios.put(
+      const res = await axios.put(
         process.env.REACT_APP_FETCH_APP + `/posts/commentPost/${postId}`,
         { comment },
         {
@@ -105,25 +113,88 @@ const Comments = ({ commentsArr, postId}: IProps) => {
         }
       );
 
-    } catch (error) {
-      setComments(comments);
-    }
+      const newComment = res.data.comment;
+      commentRef.current!.value = "";
 
+      queryClient.setQueryData<IPostResponse[]>("posts", (oldData) => {
+        if (!oldData) return [];
+        return oldData.map((post) => {
+          if (post._id === postId) {
+            return {
+              ...post,
+              comments: [...post.comments, newComment],
+            };
+          }
+          return post;
+        });
+      });
+      setComments([...comments, newComment]);
+    } catch (error) {
+      return setComments(comments);
+    }
   };
 
+  const removeCom = async (id: string) => {
+    try {
+      await axios.delete(
+        process.env.REACT_APP_FETCH_APP + `/posts/commentRemove/${id}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      queryClient.setQueryData<IPostResponse[]>("posts", (oldData) => {
+        if (!oldData) return [];
+        return oldData.map((post) => {
+          if (post._id === postId) {
+            return {
+              ...post,
+              comments: post.comments.filter((com) => com._id !== id),
+            };
+          }
+          return post;
+        });
+      });
+      setComments(comments.filter((com) => com._id !== id));
+    } catch (error) {
+      return console.log(error);
+    }
+  };
+
+  if(comments.length === 0) return null
 
   return (
-    <StyledComments>
-      {comments?.map((comment) => (
-        <StyledComment key={comment._id}>
-            <Username>{comment.user?.displayName || comment.user?.email || "Deleted User"} :</Username> {comment.comment}
-        </StyledComment>
-      ))}
+    <>
+      <StyledComments>
+        {comments?.map((comment) => (
+          <StyledComment key={comment._id}>
+            <StyledProfileLogo src={comment.user?.photoURL} alt="profile logo" />
+            <Username>
+              {comment.user?.displayName ||
+                comment.user?.email ||
+                "Deleted User"}
+              :&nbsp;
+            </Username>
+            {comment.comment}
+            {comment.user?._id === user?._id && (
+              <RemoveButton>
+                <StyledTrash
+                  onClick={() => removeCom(comment._id)}
+                  src="https://maszaweb.pl:8880/uploads/defaults/recycle-bin-line-icon.png"
+                  alt=""
+                />
+              </RemoveButton>
+            )}
+          </StyledComment>
+        ))}
+        {user && (
           <AddComment>
             <input ref={commentRef} type="text" placeholder="Add comment..." />
             <button onClick={handleAddComment}>Send</button>
           </AddComment>
-    </StyledComments>
+        )}
+      </StyledComments>
+    </>
   );
 };
 

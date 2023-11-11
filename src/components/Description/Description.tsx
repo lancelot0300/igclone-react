@@ -1,12 +1,13 @@
 import React, { FC } from 'react'
-import { LookMoreBtn, StyledDescription, StyledUserName } from './Description.styled';
+import { LookMoreBtn, StyledDescription, StyledUserName, StyledProfileLogo } from './Description.styled';
 
 interface IProps {
-    userName: string;
+    userName?: string;
     desc: string;
+    photoURL?: string;
 }
 
-const Description:FC<IProps> = ({userName, desc}) => {
+const Description:FC<IProps> = ({userName, desc, photoURL}) => {
 
     const [isExtented, setIsExtented] = React.useState(false);
     const firstPart = desc.slice(0, 100);
@@ -26,7 +27,8 @@ const Description:FC<IProps> = ({userName, desc}) => {
 
   return (
     <StyledDescription isExtented={isExtented}>
-            <p><StyledUserName>{userName} </StyledUserName>{firstPart}{isSecondPart()}</p>
+            <StyledProfileLogo src={photoURL} alt="profile logo" />
+            <StyledUserName>{userName || "Deleted"}:&nbsp;</StyledUserName>{firstPart}{isSecondPart()}
     </StyledDescription>
   )
 }

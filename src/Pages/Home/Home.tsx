@@ -20,6 +20,7 @@ export const Home: FC = () => {
     return <h1>No posts</h1>
   }
 
+
   return (
     <>
       {data.map((post) => {

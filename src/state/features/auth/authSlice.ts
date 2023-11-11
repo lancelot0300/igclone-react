@@ -7,8 +7,9 @@ interface IInitialState {
 }
 
 
+
 const initialState: IInitialState = {
-  user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")!) : null,
+  user: null,
 };
 
  const authSlice = createSlice({

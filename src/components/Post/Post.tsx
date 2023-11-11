@@ -23,18 +23,22 @@ const Options = styled.div`
   padding: 0 10px;
 `;
 
-const AddCommentButton = styled.button`
-  background-color: transparent;
-  border: none;
-  color: white;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
+const PostImage = styled(Image)`
+aspect-ratio: 9/10;
+object-fit: cover;
+object-position: center;
+overflow: hidden;
 
-  &:hover {
-    color: rgb(0, 149, 246);
-  }
 `;
+
+const StyledTrash = styled.img`
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+  background-color: transparent;
+  margin-right: 10px;
+  margin-top: 5px;
+  `;
 
 export const Post: FC<IProps> = ({ postData }) => {
   const queryClient = useQueryClient();
@@ -43,23 +47,40 @@ export const Post: FC<IProps> = ({ postData }) => {
 
   const { photoURL, displayName, email } = postData.user;
 
-  const initialLiked = postData.likes.some((like) => like === user?._id);
-  const [liked, setLiked] = useState(initialLiked);
-  const [likesCount, setLikesCount] = useState(0);
+  const [liked, setLiked] = useState(postData.likes.some((like) => like === user?._id));
+  const [likesCount, setLikesCount] = useState(likes.length);
 
-  useEffect(() => {
-    const isLiked = likes.some((like) => like === user?._id);
-    setLiked(isLiked);
-    setLikesCount(likes.length);
-  }, [likes, user]);
+
+  const removePost = async () => {
+
+    try {
+      await axios.delete(
+        process.env.REACT_APP_FETCH_APP + `/posts/${_id}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+    } catch (error) {
+      return console.log(error);
+    }
+
+    queryClient.setQueryData<IPostResponse[]>("posts", (oldData) => {
+      if (!oldData) return [];
+      return oldData.filter((post) => post._id !== _id);
+    }
+    );
+
+  }
+
 
   const handleLikeClick = async () => {
     if (!user) return;
-  
-    const newLikesCount = liked ? likesCount - 1 : likesCount + 1;
-    setLikesCount(newLikesCount);
-    setLiked((prev) => !prev);
-  
+
+    setLiked((prevLiked) => !prevLiked);
+    setLikesCount((prevLikesCount) => (liked ? prevLikesCount - 1 : prevLikesCount + 1));
+
+
     try {
       await axios.put(
         process.env.REACT_APP_FETCH_APP + `/posts/likePost/${_id}`,
@@ -70,9 +91,27 @@ export const Post: FC<IProps> = ({ postData }) => {
       );
 
     } catch (error) {
-      console.log(error);
+      setLiked(liked)
+      setLikesCount(likes.length)
     }
+
+
+    const newLikes = liked ? likes.filter((like) => like !== user._id) : [...likes, user._id];
+
+    queryClient.setQueryData<IPostResponse[]>("posts", (oldData) => {
+      if (!oldData) return [];
+      return oldData.map((post) => {
+        if (post._id === _id) {
+          return { ...post, likes: newLikes };
+        }
+        return post;
+      });
+    }
+    );
+  
   };
+
+  if(!postData) return null
 
   return (
     <>
@@ -84,7 +123,7 @@ export const Post: FC<IProps> = ({ postData }) => {
           <span>{displayName || email}</span>
         </StyledUser>
 
-        <Image
+        <PostImage
           src={photo}
           onLikeFunc={handleLikeClick}
           setLiked={setLiked}
@@ -97,8 +136,14 @@ export const Post: FC<IProps> = ({ postData }) => {
             handleClick={handleLikeClick}
             disabled={!user}
           />
+          
+         {
+          user && <StyledTrash  onClick={removePost} src="https://maszaweb.pl:8880/uploads/defaults/recycle-bin-line-icon.png" alt="" />
+         } 
+
         </Options>
-        <Description userName={displayName || email || ""} desc={desc} />
+
+        <Description userName={displayName || email} desc={desc} photoURL={photoURL} />
         <Comments postId={postData._id} commentsArr={postData.comments} />
       </StyledPost>
     </>
