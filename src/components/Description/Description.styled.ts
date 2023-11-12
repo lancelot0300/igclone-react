@@ -7,9 +7,10 @@ interface IDescription {
 export const StyledUserName = styled.span`
   font-size: 1rem;
   font-weight: 700;
+  vertical-align: top;
 `;
 
-export const StyledDescription = styled.div<IDescription>`
+export const DescriptionWrapper = styled.div<IDescription>`
   padding: 0 10px 5px;
   font-size: 1rem;
   font-weight: 400;
@@ -31,7 +32,7 @@ export const StyledDescription = styled.div<IDescription>`
     }
     `}
 `;
-export const LookMoreBtn = styled.button`
+export const LookMoreBtn = styled.span`
   background-color: transparent;
   border: none;
   color: #000;
@@ -57,4 +58,13 @@ export const StyledProfileLogo = styled.img`
   object-position: center;
   overflow: hidden;
   margin-right: 5px;
+  flex-shrink: 0;
+`;
+
+export const DescriptionText = styled.p`
+  margin: 0;
+  margin-left: 5px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 `;

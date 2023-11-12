@@ -52,20 +52,22 @@ const Posts = styled.div`
 
 const Profile = () => {
   const { id } = useParams();
-  const profileData = useFetch<IProfile>("/profile/" + id);
+  const {data, isError, isFetching} = useFetch<IProfile>("/profile/" + id);
 
+  if(id === 'no-user') return (<div>No User</div>)
 
-  if (!profileData.data) {
+  if (isFetching) {
     return <div>Loading...</div>;
   }
+  if(isError) return (<div>Something went wrong...</div>)
 
-  const {user, posts} = profileData.data
+  const {user, posts} = data || {};
 
   return (
     <>
       <User>
         <img
-          src={user?.photoURL}
+          src={user?.photoURL || "https://maszaweb.pl:8880/uploads/defaults/young-businessman-icon.png"}
           alt="avatar"
           width={150}
           height={150}

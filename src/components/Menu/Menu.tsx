@@ -7,7 +7,7 @@ const Menu: FC = () => {
   return (
     <>
       <MenuContainer>
-        <MenuLink to="/">My Website</MenuLink>
+        <MenuLink to="/">IG clone</MenuLink>
         <MenuProfile />
       </MenuContainer>
     </>

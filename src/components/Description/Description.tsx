@@ -1,23 +1,25 @@
 import React, { FC } from 'react'
-import { LookMoreBtn, StyledDescription, StyledUserName, StyledProfileLogo } from './Description.styled';
+import { LookMoreBtn, DescriptionWrapper, StyledUserName, StyledProfileLogo, DescriptionText } from './Description.styled';
+import { Link } from 'react-router-dom';
 
 interface IProps {
     userName?: string;
     desc: string;
     photoURL?: string;
+    userId?: string;
 }
 
-const Description:FC<IProps> = ({userName, desc, photoURL}) => {
+const Description:FC<IProps> = ({userName, desc, photoURL, userId}) => {
 
     const [isExtented, setIsExtented] = React.useState(false);
-    const firstPart = desc.slice(0, 100);
-    const secondPart = desc.slice(100, desc.length);
+    const firstPart = desc.slice(0, 51);
+    const secondPart = desc.slice(51, desc.length);
 
 
     const isSecondPart = () => {
         if(secondPart.length === 0) return;
         if(!isExtented) return (<>... <LookMoreBtn onClick={lookMoreHandler}>More</LookMoreBtn></>)
-        return (<>{secondPart} <LookMoreBtn onClick={lookMoreHandler}>Less</LookMoreBtn></>)
+        return (<>{secondPart}</>)
     }
 
 
@@ -26,10 +28,10 @@ const Description:FC<IProps> = ({userName, desc, photoURL}) => {
     }
 
   return (
-    <StyledDescription isExtented={isExtented}>
-            <StyledProfileLogo src={photoURL} alt="profile logo" />
-            <StyledUserName>{userName || "Deleted"}:&nbsp;</StyledUserName>{firstPart}{isSecondPart()}
-    </StyledDescription>
+    <DescriptionWrapper isExtented={isExtented}>
+            <Link to={`/profile/${userId}`}><StyledProfileLogo src={photoURL} alt="profile logo" /></Link>
+            <DescriptionText><StyledUserName>{userName || "Deleted"}:&nbsp;</StyledUserName>{firstPart}{isSecondPart()}</DescriptionText>
+    </DescriptionWrapper>
   )
 }
 

@@ -7,14 +7,15 @@ interface IProps {
   post: IPostResponse;
 }
 
-const StyledImage = styled(Image)`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
+const StyledImage = styled.img`
+width: 100%;
+height: 100%;
+object-fit: cover;
+object-position: center;
+overflow: hidden;
 `;
 const Wrapper = styled.div`
-  width: 100%;
+  aspect-ratio: 9/10;
 `;
 
 export const ProfileImages: FC<IProps> = ({ post }) => {

@@ -20,13 +20,11 @@ const PostImage = forwardRef<HTMLImageElement, IProps>(
       const timeSinceLastClick = clickTime - lastClickTime;
 
       if (timeSinceLastClick < 300) {
-        // Handle double-click (time interval less than 300ms)
         if (onLikeFunc) {
           onLikeFunc();
         }
       }
       
-      // Update the last click time
       setLastClickTime(clickTime);
 
       if (onClick) {

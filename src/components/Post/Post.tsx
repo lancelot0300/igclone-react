@@ -1,5 +1,5 @@
 import {  ILikes, IPostResponse, IUser } from "../../interfaces/interfaces";
-import { StyledPost, StyledUser } from "./Post.styles";
+import { Options, StyledPost, StyledPostImage, StyledTrash, StyledUser } from "./Post.styles";
 import Image from "../PostImage/PostImage";
 import Likes from "../Likes/Likes";
 import Description from "../Description/Description";
@@ -14,29 +14,6 @@ interface IProps {
   postData: IPostResponse;
 }
 
-const Options = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  padding: 0 10px;
-`;
-
-const PostImage = styled(Image)`
-aspect-ratio: 9/10;
-object-fit: cover;
-object-position: center;
-overflow: hidden;
-
-`;
-
-const StyledTrash = styled.img`
-  width: 35px;
-  height: 35px;
-  cursor: pointer;
-  background-color: transparent;
-  margin-right: 10px;
-  margin-top: 5px;
-  `;
 
   interface IProps {
     postData: IPostResponse;
@@ -51,7 +28,7 @@ const Post = ({ postData, handleLikeClick, user, setLiked, liked }: IProps) => {
   const queryClient = useQueryClient();
   const { photo, desc, likes, _id } = postData;
 
-  const { photoURL, displayName, email } = postData.user || ({});
+  const { photoURL, displayName, email, _id: commentUserId } = postData.user || ({});
 
 
 
@@ -66,7 +43,7 @@ const Post = ({ postData, handleLikeClick, user, setLiked, liked }: IProps) => {
           <span>{displayName || email || "Deleted User"}</span>
         </StyledUser>
 
-        <PostImage
+        <StyledPostImage
           src={photo}
           onLikeFunc={handleLikeClick}
           setLiked={setLiked}
@@ -86,7 +63,7 @@ const Post = ({ postData, handleLikeClick, user, setLiked, liked }: IProps) => {
 
         </Options>
 
-        <Description userName={displayName || email} desc={desc} photoURL={photoURL} />
+        <Description userName={displayName || email} desc={desc} photoURL={photoURL} userId={commentUserId} />
         <Comments post={postData} commentsArr={postData.comments} />
       </StyledPost>
   );
