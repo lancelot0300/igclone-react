@@ -4,7 +4,7 @@ import {
   } from 'react-query'
 
 
-export const useFetch = <T>(url: string, key? : string) => {
+export const useFetch = <T>( url: string, key?: string) => {
     return useQuery({
         queryKey: key ? key : url,
         queryFn: async () => {
@@ -12,7 +12,11 @@ export const useFetch = <T>(url: string, key? : string) => {
             return res.data as T
         },
         refetchOnWindowFocus: false,
-        refetchOnMount: true,
-        refetchOnReconnect: false,
+        refetchOnMount: false,
+        refetchOnReconnect: true,
+        retry: 1,  
+        staleTime: 1000 * 60 * 5,
+        cacheTime: 1000 * 60 * 5,
+    
     })
 }

@@ -1,7 +1,7 @@
 import { FC } from "react";
 import styled from "styled-components";
 import { IPost, IPostResponse } from "../../interfaces/interfaces";
-import Image from "../Image/Image";
+import Image from "../PostImage/PostImage";
 
 interface IProps {
   post: IPostResponse;

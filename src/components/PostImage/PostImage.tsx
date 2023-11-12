@@ -11,7 +11,7 @@ interface IProps {
   onLikeFunc?: () => void;
 }
 
-const Image = forwardRef<HTMLImageElement, IProps>(
+const PostImage = forwardRef<HTMLImageElement, IProps>(
   ({ src, alt, onClick, setLiked, onLikeFunc, ...props }: IProps, ref: Ref<HTMLImageElement>) => {
     const [lastClickTime, setLastClickTime] = useState(0);
 
@@ -38,4 +38,4 @@ const Image = forwardRef<HTMLImageElement, IProps>(
   }
 );
 
-export default Image;
+export default PostImage;

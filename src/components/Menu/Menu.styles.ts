@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import  Image  from "../Image/Image"
+import  Image  from "../PostImage/PostImage"
 export const MenuContainer = styled.nav`
   position: sticky;
   top: 0;

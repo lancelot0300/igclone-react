@@ -1,29 +1,24 @@
-import { useState } from "react";
-import {
-  FileDropArea,
-  FileInput,
-  FileMessage,
-  StyledInput,
-} from "../../components/Input/Input.styles";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import { useMutation, useQueryClient } from "react-query";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state/store";
+import { FileDropArea, FileInput, FileMessage, StyledInput } from "../../components/Input/Input.styles";
 import { Button } from "../../components/Button/Button";
 import { Form } from "../../components/Form/Form";
 import { IPost } from "../../interfaces/interfaces";
-import { useSelector } from "react-redux";
-import { RootState } from "../../state/store";
-import { useNavigate } from "react-router-dom";
-import { useFormik } from "formik";
-import { useMutation } from "react-query";
 import { createPost, sendFile } from "../../api/api";
 import { CreatePostSchema, isValidFileType } from "../../scheama/createPostSchema";
 
 const CreatePost = () => {
-  const [wait, setWait] = useState(false);
-  const [photoState, setPhotoState] = useState<File>();
   const { user } = useSelector((state: RootState) => state.auth);
+  const queryClient = useQueryClient();
+  const [wait, setWait] = useState(false);
+  const [photoState, setPhotoState] = useState<File | undefined>();
   const navigate = useNavigate();
   const fileMutation = useMutation(sendFile);
   const postMutation = useMutation(createPost);
- 
 
   interface FormValues {
     desc: string;
@@ -32,13 +27,21 @@ const CreatePost = () => {
 
   const onSubmit = async ({ desc, photo }: FormValues) => {
     if (!photo || !user) return;
+
     setWait(true);
     const res = await fileMutation.mutateAsync(photo);
     const post: IPost = {
       desc,
       photo: res.fileUrl,
     };
-    await postMutation.mutateAsync(post);
+
+    const res2 = await postMutation.mutateAsync(post);
+
+    queryClient.setQueriesData("posts", (oldData: IPost[] | undefined) => {
+      if (!oldData) return [];
+      return [res2, ...oldData];
+    });
+
     setWait(false);
     navigate("/");
   };
@@ -64,23 +67,17 @@ const CreatePost = () => {
     if (!isValidFileType(file.name, file.type)) return null;
     return (
       <>
-        <img
-          width="100px"
-          height="100px"
-          src={URL.createObjectURL(file)}
-          alt="Preview"
-        />
+        <img width="100px" height="100px" src={URL.createObjectURL(file)} alt="Preview" />
         <p>{(file.size / (1024 * 1024)).toFixed(1)}MB</p>
       </>
     );
   };
 
-
   return (
     <>
       <Form onSubmit={handleSubmit}>
         <StyledInput
-          $isError={errors.desc && touched.desc ? true : false}
+          $isError={errors.desc && touched.desc}
           type="text"
           placeholder="Type a description for your post"
           name="desc"
@@ -88,12 +85,10 @@ const CreatePost = () => {
           onChange={handleChange}
           onBlur={handleBlur}
         />
-        <FileMessage $isError={errors.desc && touched.desc ? true : false}>
-          {touched.desc && errors.desc}
-        </FileMessage>
+        <FileMessage $isError={errors.desc && touched.desc}>{touched.desc && errors.desc}</FileMessage>
         {photoState && showPreview(photoState)}
-        <FileDropArea $isError={errors.photo && touched.photo ? true : false}>
-          <FileMessage $isError={errors.photo && touched.photo ? true : false}>
+        <FileDropArea $isError={errors.photo && touched.photo}>
+          <FileMessage $isError={errors.photo && touched.photo}>
             {errors.photo && touched.photo ? errors.photo : "Drag and Drop"}
           </FileMessage>
           <FileInput

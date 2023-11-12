@@ -12,9 +12,9 @@ export interface IComment {
 
 export interface IPostResponse {
   desc: string;
-  user: IUser;
+  user?: IUser;
   photo: string;
-  likes: string[];
+  likes: ILikes[];
   comments: IComment[];
   _id: string;
 }
@@ -29,6 +29,10 @@ export interface IUser {
   displayName?: string | null;
   _id: string;
   email: string;
+}
+
+export interface ILikes {
+  _id?: string;
 }
 
 export interface IProfile {

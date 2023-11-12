@@ -1,9 +1,10 @@
 import React, { FC } from "react";
 import styled from "styled-components";
 import Like from "../Like/Like";
+import { ILikes } from "../../interfaces/interfaces";
 
 interface LikesProps {
-  likesCount: number;
+  likes: ILikes[];
   liked: boolean;
   handleClick: () => void;
   disabled?: boolean;
@@ -22,12 +23,14 @@ const StyledLikes = styled.div`
   }
 `;
 
-const Likes: FC<LikesProps> = ({ likesCount, handleClick, liked, disabled }) => {
+const Likes: FC<LikesProps> = ({ likes, handleClick, liked, disabled }) => {
+
+
   return (
     <StyledLikes>
       <Like isLiked={liked} onClick={handleClick} disabled={disabled} />
       <p>
-        {likesCount} <b>Likes</b>
+        {likes.length} <b>Likes</b>
       </p>
     </StyledLikes>
   );

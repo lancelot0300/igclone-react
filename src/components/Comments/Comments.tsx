@@ -91,10 +91,12 @@ const StyledTrash = styled.img`
 
 interface IProps {
   commentsArr?: IComment[];
-  postId: string;
+  post: IPostResponse;
 }
 
-const Comments = ({ commentsArr, postId }: IProps) => {
+const Comments = ({ commentsArr, post }: IProps) => {
+  const {_id: postId, user: postUser} = post
+
   const [comments, setComments] = useState<IComment[]>(commentsArr || []);
   const commentRef = useRef<HTMLInputElement>(null);
   const { user } = useSelector((state: RootState) => state.auth);
@@ -161,8 +163,6 @@ const Comments = ({ commentsArr, postId }: IProps) => {
     }
   };
 
-  if(comments.length === 0) return null
-
   return (
     <>
       <StyledComments>
@@ -176,7 +176,7 @@ const Comments = ({ commentsArr, postId }: IProps) => {
               :&nbsp;
             </Username>
             {comment.comment}
-            {comment.user?._id === user?._id && (
+            {(user && comment.user?._id === user?._id) || (user && postUser?._id === user?._id) ? (
               <RemoveButton>
                 <StyledTrash
                   onClick={() => removeCom(comment._id)}
@@ -184,6 +184,8 @@ const Comments = ({ commentsArr, postId }: IProps) => {
                   alt=""
                 />
               </RemoveButton>
+            ) : (
+              ""
             )}
           </StyledComment>
         ))}

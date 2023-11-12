@@ -1,29 +1,26 @@
 import { FC, useEffect } from "react";
 import { IPostResponse } from "../../interfaces/interfaces";
-import { Post } from "../../components/Post/Post";
+import Post from "../../components/Post/Post";
 import { useFetch } from "../../hooks/useFetch";
 
 
 export const Home: FC = () => {
 
-  const {data, error} = useFetch<IPostResponse[]>("/posts", "posts");
+  const {data, isError, isLoading} = useFetch<IPostResponse[]>("/posts", "posts");
 
-  if(error) {
-    return <h1>Something went wrong</h1>
+  if(isLoading) {
+    return <div>Loading...</div>
   }
 
-  if(!data) {
-    return <h1>Loading...</h1>
-  }
-
-  if(data.length === 0) {
-    return <h1>No posts</h1>
+  if(isError) {
+    console.log(isError)
+    return <div>Error...</div>
   }
 
 
   return (
     <>
-      {data.map((post) => {
+      {data?.map((post) => {
         return <Post postData={post} key={post._id} />;
       })}
     </>
