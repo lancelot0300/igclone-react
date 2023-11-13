@@ -1,10 +1,8 @@
-import { FC, useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import Menu from "./components/Menu/Menu";
 import { ProtectedRoute } from "./components/ProtectedRoute/ProtectedRoute";
 import { AppContainer, Container, GlobalStyle } from "./App.styles";
-import { loginFailure, loginSuccess } from "./state/features/auth/authSlice";
-import { RootState, useAppDispatch } from "./state/store";
+import { RootState } from "./state/store";
 import { useSelector } from "react-redux";
 import { Login } from "./Pages/Login/Login";
 import { Register } from "./Pages/Register/Register";
@@ -13,9 +11,8 @@ import Profile from "./Pages/Profile/Profile";
 import Settings from "./Pages/Settings/Settings";
 import CreatePost from "./Pages/CreatePost/CreatePost";
 import { PageNotFound } from "./Pages/PageNotFound/PageNotFound";
-import axios from "axios";
 
-const App: FC = () => {
+const App = () => {
   const { user } = useSelector((state: RootState) => state.auth);
 
 

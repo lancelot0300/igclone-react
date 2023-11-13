@@ -1,9 +1,8 @@
-import { FC, useState } from "react";
+import { useState } from "react";
 import { Button } from "../../components/Button/Button";
 import { Form } from "../../components/Form/Form";
 import { FormLink, StyledMessage } from "../../components/Form/Form.style";
 import * as yup from "yup";
-import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 import { useFormik } from "formik";
 import { StyledInput } from "../../components/Input/Input.styles";
 import { loginSuccess } from "../../state/features/auth/authSlice";
@@ -12,8 +11,14 @@ import { useMutation } from "react-query";
 import { registerUser } from "../../api/api";
 import { useAppDispatch } from "../../state/store";
 
+interface FormValues {
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
 
-export const Register: FC = () => {
+
+export const Register = () => {
   const [wait, setWait] = useState(false);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -29,12 +34,6 @@ export const Register: FC = () => {
       .oneOf([yup.ref("password"), null], "Passwords must match")
       .required("Confirm password is required"),
   });
-
-  interface FormValues {
-    email: string;
-    password: string;
-    confirmPassword: string;
-  }
 
   const onSubmit = async ({ email, password }: FormValues) => {
     setWait(true);

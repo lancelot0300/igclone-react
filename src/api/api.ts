@@ -1,7 +1,11 @@
 import axios from "axios";
-import { IComment, IPost, IPostResponse } from "../interfaces/interfaces";
-import { QueryClient, useMutation } from "react-query";
-import { Dispatch } from "react";
+import {
+  IComment,
+  ILikes,
+  IPost,
+  IPostResponse,
+} from "../interfaces/interfaces";
+import { QueryClient } from "react-query";
 
 export const createPost = async (post: IPost) => {
   try {
@@ -38,7 +42,6 @@ export const sendFile = async (file: File) => {
     throw new Error("Uploading photo faild");
   }
 };
-
 
 export const registerUser = async ({
   email,
@@ -109,8 +112,12 @@ export const removeComment = async (
   }
 };
 
-export const addComment = async (value: string, postId: string, queryClient: QueryClient, setComments: React.Dispatch<React.SetStateAction<IComment[]>>) => {
-
+export const addComment = async (
+  value: string,
+  postId: string,
+  queryClient: QueryClient,
+  setComments: React.Dispatch<React.SetStateAction<IComment[]>>
+) => {
   if (!value) return;
 
   try {
@@ -127,7 +134,9 @@ export const addComment = async (value: string, postId: string, queryClient: Que
     queryClient.setQueryData<IPostResponse[]>("posts", (oldData) =>
       oldData
         ? oldData.map((p) =>
-            p._id === postId ? { ...p, comments: [...p.comments, newComment] } : p
+            p._id === postId
+              ? { ...p, comments: [...p.comments, newComment] }
+              : p
           )
         : []
     );
@@ -136,4 +145,32 @@ export const addComment = async (value: string, postId: string, queryClient: Que
   } catch (error) {
     console.error(error);
   }
+};
+
+export const updateLikes = async (
+  postId: string,
+  newLikes: ILikes[],
+  isLiked: boolean,
+  queryClient: QueryClient,
+  setLikes: React.Dispatch<React.SetStateAction<ILikes[]>>,
+  setIsLiked: React.Dispatch<React.SetStateAction<boolean>>
+) => {
+  setLikes(newLikes);
+  setIsLiked(!isLiked);
+  await axios.put(
+    process.env.REACT_APP_FETCH_APP + `/posts/likePost/${postId}`,
+    null,
+    {
+      withCredentials: true,
+    }
+  );
+  queryClient.setQueriesData(
+    "posts",
+    (oldData: IPostResponse[] | undefined) => {
+      if (!oldData) return [];
+      return oldData.map((post) =>
+        post._id === postId ? { ...post, likes: newLikes } : post
+      );
+    }
+  );
 };

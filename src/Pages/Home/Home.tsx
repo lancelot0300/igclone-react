@@ -1,10 +1,9 @@
-import { FC, useEffect } from "react";
 import { IPostResponse } from "../../interfaces/interfaces";
 import Post from "../../components/Post/Post";
 import { useFetch } from "../../hooks/useFetch";
 
 
-export const Home: FC = () => {
+export const Home = () => {
 
   const {data, isError, isLoading} = useFetch<IPostResponse[]>("/posts", "posts");
 

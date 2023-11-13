@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useQueryClient } from "react-query";
-import axios from "axios";
 import { ILikes, IPostResponse, IUser } from "../../interfaces/interfaces";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store";
+import { updateLikes } from "../../api/api";
 
 interface WithLikeProps {
   postData: IPostResponse;
@@ -27,26 +27,6 @@ const withLike = (WrappedComponent: React.FC<IProps>) => {
     const [likes, setLikes] = useState<ILikes[]>(postData.likes);
     const queryClient = useQueryClient();
 
-    const updateLikes = async (newLikes: ILikes[]) => {
-      setLikes(newLikes);
-      setIsLiked(!isLiked);
-      await axios.put(
-        process.env.REACT_APP_FETCH_APP + `/posts/likePost/${postData._id}`,
-        null,
-        {
-          withCredentials: true,
-        }
-      );
-      queryClient.setQueriesData(
-        "posts",
-        (oldData: IPostResponse[] | undefined) => {
-          if (!oldData) return [];
-          return oldData.map((post) =>
-            post._id === postData._id ? { ...post, likes: newLikes } : post
-          );
-        }
-      );
-    };
 
     const handleLikeClick = async () => {
       if (!user) return;
@@ -55,7 +35,7 @@ const withLike = (WrappedComponent: React.FC<IProps>) => {
         ? likes.filter((like) => like !== user?._id)
         : [...likes, user._id as ILikes];
 
-      await updateLikes(newLikes);
+      await updateLikes(postData._id, newLikes, isLiked, queryClient, setLikes, setIsLiked);
     };
 
     return (

@@ -1,7 +1,6 @@
-import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../state/store";
-import { IComment, IUser } from "../../../interfaces/interfaces";
+import { IComment} from "../../../interfaces/interfaces";
 import { RemoveButton, StyledTrash } from "./RemoveComment.styles";
 
 interface IProps {

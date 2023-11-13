@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useState, Ref, MouseEvent } from "react";
+import  { forwardRef, useState, Ref, MouseEvent } from "react";
 
 interface IProps {
   src: string;

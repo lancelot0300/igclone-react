@@ -3,7 +3,6 @@ import { Options, StyledPost, StyledPostImage, StyledTrash, StyledUser } from ".
 import Image from "../PostImage/PostImage";
 import Likes from "../Likes/Likes";
 import Description from "../Description/Description";
-import styled from "styled-components";
 import Comments from "../Comments/Comments";
 import { Link } from "react-router-dom";
 import { useQueryClient } from "react-query";
