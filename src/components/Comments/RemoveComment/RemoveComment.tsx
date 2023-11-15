@@ -23,7 +23,7 @@ const RemoveComment = ({ postUserId, comment, removeComment } : IProps) => {
     <RemoveButton>
       <StyledTrash
         onClick={() => removeComment(comment._id)}
-        src="https://maszaweb.pl:8880/uploads/defaults/recycle-bin-line-icon.png"
+        src={`${process.env.REACT_APP_FETCH_PHOTOS}/uploads/defaults/recycle-bin-line-icon.png`}
         alt=""
       />
     </RemoveButton>

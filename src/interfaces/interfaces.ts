@@ -14,7 +14,7 @@ export interface IPostResponse {
   desc: string;
   user?: IUser;
   photo: string;
-  likes: ILikes[];
+  likes: string[];
   comments: IComment[];
   _id: string;
 }

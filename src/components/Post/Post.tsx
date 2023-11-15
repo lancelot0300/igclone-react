@@ -20,12 +20,12 @@ interface IProps {
     user: IUser | null;
     setLiked: React.Dispatch<React.SetStateAction<boolean>>;
     liked: boolean;
-    likes: ILikes[];
+    likes: string[];
   }
 
-const Post = ({ postData, handleLikeClick, user, setLiked, liked }: IProps) => {
+const Post = ({ postData, handleLikeClick, user, setLiked, liked, likes }: IProps) => {
   const queryClient = useQueryClient();
-  const { photo, desc, likes, _id } = postData;
+  const { photo, desc, _id } = postData;
 
   const { photoURL, displayName, email, _id: commentUserId } = postData.user || ({});
 
@@ -57,7 +57,7 @@ const Post = ({ postData, handleLikeClick, user, setLiked, liked }: IProps) => {
           />
           
          {
-          user?._id === postData.user?._id && <StyledTrash  onClick={() => removePost(_id, queryClient)} src="https://maszaweb.pl:8880/uploads/defaults/recycle-bin-line-icon.png" alt="" />
+          user?._id === postData.user?._id && <StyledTrash  onClick={() => removePost(_id, queryClient)} src={`${process.env.REACT_APP_FETCH_PHOTOS}/uploads/defaults/recycle-bin-line-icon.png`}  alt="" />
          } 
 
         </Options>

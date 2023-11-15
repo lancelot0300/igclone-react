@@ -4,7 +4,7 @@ import Like from "../Like/Like";
 import { ILikes } from "../../interfaces/interfaces";
 
 interface LikesProps {
-  likes: ILikes[];
+  likes: string[];
   liked: boolean;
   handleClick: () => void;
   disabled?: boolean;

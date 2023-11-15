@@ -149,28 +149,39 @@ export const addComment = async (
 
 export const updateLikes = async (
   postId: string,
-  newLikes: ILikes[],
+  newLikes: string[],
+  oldLikes: string[],
   isLiked: boolean,
   queryClient: QueryClient,
-  setLikes: React.Dispatch<React.SetStateAction<ILikes[]>>,
+  setLikes: React.Dispatch<React.SetStateAction<string[]>>,
   setIsLiked: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
-  setLikes(newLikes);
-  setIsLiked(!isLiked);
-  await axios.put(
-    process.env.REACT_APP_FETCH_APP + `/posts/likePost/${postId}`,
-    null,
-    {
-      withCredentials: true,
-    }
-  );
-  queryClient.setQueriesData(
-    "posts",
-    (oldData: IPostResponse[] | undefined) => {
-      if (!oldData) return [];
-      return oldData.map((post) =>
-        post._id === postId ? { ...post, likes: newLikes } : post
-      );
-    }
-  );
+
+  
+  try {
+    setLikes(newLikes);
+    setIsLiked(!isLiked);
+   const res =  await axios.put<string[]>(
+      process.env.REACT_APP_FETCH_APP + `/posts/likePost/${postId}`,
+      null,
+      {
+        withCredentials: true,
+      }
+    );
+
+    queryClient.setQueriesData(
+      "posts",
+      (oldData: IPostResponse[] | undefined) => {
+        if (!oldData) return [];
+        return oldData.map((post) =>
+          post._id === postId ? { ...post, likes: res.data} : post
+        );
+      }
+    );
+  }
+  catch (error) {
+    setLikes(oldLikes);
+    setIsLiked(isLiked);
+  }
+ 
 };

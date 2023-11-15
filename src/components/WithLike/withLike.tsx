@@ -15,7 +15,7 @@ interface IProps {
   user: IUser | null;
   setLiked: React.Dispatch<React.SetStateAction<boolean>>;
   liked: boolean;
-  likes: ILikes[];
+  likes: string[];
 }
 
 const withLike = (WrappedComponent: React.FC<IProps>) => {
@@ -24,18 +24,15 @@ const withLike = (WrappedComponent: React.FC<IProps>) => {
     const [isLiked, setIsLiked] = useState<boolean>(
       postData.likes.some((like) => like === user?._id)
     );
-    const [likes, setLikes] = useState<ILikes[]>(postData.likes);
+    const [likes, setLikes] = useState<string[]>(postData.likes);
     const queryClient = useQueryClient();
 
 
     const handleLikeClick = async () => {
       if (!user) return;
 
-      const newLikes = isLiked
-        ? likes.filter((like) => like !== user?._id)
-        : [...likes, user._id as ILikes];
-
-      await updateLikes(postData._id, newLikes, isLiked, queryClient, setLikes, setIsLiked);
+      const newLikes = isLiked ? likes.filter((like) => like !== user._id) : [...likes, user._id];
+      await updateLikes(postData._id, newLikes, likes ,isLiked, queryClient,  setLikes, setIsLiked);
     };
 
     return (
