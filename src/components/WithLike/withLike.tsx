@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { useQueryClient } from "react-query";
-import { ILikes, IPostResponse, IUser } from "../../interfaces/interfaces";
+import { ILikes, IPostsResponse, IUser } from "../../interfaces/interfaces";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store";
 import { updateLikes } from "../../api/api";
 
 interface WithLikeProps {
-  postData: IPostResponse;
+  postData: IPostsResponse;
 }
 
 interface IProps {
-  postData: IPostResponse;
+  postData: IPostsResponse;
   handleLikeClick: () => void;
   user: IUser | null;
   setLiked: React.Dispatch<React.SetStateAction<boolean>>;

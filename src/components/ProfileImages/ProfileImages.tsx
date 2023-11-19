@@ -1,9 +1,9 @@
 import { FC } from "react";
 import styled from "styled-components";
-import { IPostResponse } from "../../interfaces/interfaces";
+import { IPostsResponse } from "../../interfaces/interfaces";
 
 interface IProps {
-  post: IPostResponse;
+  post: IPostsResponse;
 }
 
 const StyledImage = styled.img`

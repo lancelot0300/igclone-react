@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { ProfileImages } from "../../components/ProfileImages/ProfileImages";
-import { IPostResponse, IProfile } from "../../interfaces/interfaces";
+import { IPostsResponse, IProfile } from "../../interfaces/interfaces";
 import { useFetch } from "../../hooks/useFetch";
 import { Posts, User } from "./Profile.styles";
 
@@ -31,7 +31,7 @@ const Profile = () => {
         <p>Posty: {posts?.length || 0}</p>
       </User>
       <Posts>
-        {posts?.map((post : IPostResponse) => (
+        {posts?.map((post : IPostsResponse) => (
           <ProfileImages key={post._id} post={post} />
         ))}
       </Posts>

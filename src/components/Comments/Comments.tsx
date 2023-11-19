@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store";
-import { IComment, IPostResponse } from "../../interfaces/interfaces";
+import { IComment, IPostsResponse } from "../../interfaces/interfaces";
 import RemoveComment from "./RemoveComment/RemoveComment";
 import {
   AddCommentWrapper,
@@ -16,7 +16,7 @@ import { Link } from "react-router-dom";
 
 interface IProps {
   commentsArr?: IComment[];
-  post: IPostResponse;
+  post: IPostsResponse;
 }
 
 const Comments: React.FC<IProps> = ({ commentsArr = [], post }) => {

@@ -1,4 +1,4 @@
-import {  ILikes, IPostResponse, IUser } from "../../interfaces/interfaces";
+import {  ILikes, IPostsResponse, IUser } from "../../interfaces/interfaces";
 import { Options, StyledPost, StyledPostImage, StyledTrash, StyledUser } from "./Post.styles";
 import Image from "../PostImage/PostImage";
 import Likes from "../Likes/Likes";
@@ -10,12 +10,12 @@ import withLike from "../WithLike/withLike";
 import { removePost } from "../../api/api";
 
 interface IProps {
-  postData: IPostResponse;
+  postData: IPostsResponse;
 }
 
 
   interface IProps {
-    postData: IPostResponse;
+    postData: IPostsResponse;
     handleLikeClick: () => void;
     user: IUser | null;
     setLiked: React.Dispatch<React.SetStateAction<boolean>>;

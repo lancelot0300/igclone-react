@@ -3,7 +3,7 @@ import {
   IComment,
   ILikes,
   IPost,
-  IPostResponse,
+  IPostsResponse,
 } from "../interfaces/interfaces";
 import { QueryClient } from "react-query";
 
@@ -76,7 +76,7 @@ export const removePost = async (_id: string, queryClient: QueryClient) => {
     return console.log(error);
   }
 
-  queryClient.setQueryData<IPostResponse[]>("posts", (oldData) => {
+  queryClient.setQueryData<IPostsResponse[]>("posts", (oldData) => {
     if (!oldData) return [];
     return oldData.filter((post) => post._id !== _id);
   });
@@ -96,7 +96,7 @@ export const removeComment = async (
       }
     );
 
-    queryClient.setQueryData<IPostResponse[]>("posts", (oldData) =>
+    queryClient.setQueryData<IPostsResponse[]>("posts", (oldData) =>
       oldData
         ? oldData.map((p) =>
             p._id === postId
@@ -131,7 +131,7 @@ export const addComment = async (
 
     const newComment = res.data.comment;
 
-    queryClient.setQueryData<IPostResponse[]>("posts", (oldData) =>
+    queryClient.setQueryData<IPostsResponse[]>("posts", (oldData) =>
       oldData
         ? oldData.map((p) =>
             p._id === postId
@@ -171,7 +171,7 @@ export const updateLikes = async (
 
     queryClient.setQueriesData(
       "posts",
-      (oldData: IPostResponse[] | undefined) => {
+      (oldData: IPostsResponse[] | undefined) => {
         if (!oldData) return [];
         return oldData.map((post) =>
           post._id === postId ? { ...post, likes: res.data} : post
