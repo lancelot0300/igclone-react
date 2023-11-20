@@ -1,22 +1,30 @@
 import { IResponse } from "../../interfaces/interfaces";
 import Post from "../../components/Post/Post";
-import { useEffect} from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useInfiniteQuery } from "react-query";
-import React from "react";
 
 export const Home = () => {
+  const [hasFetched, setHasFetched] = useState<boolean>(false);
 
-  const { isError, isLoading, isFetching, data, fetchNextPage, hasNextPage } = useInfiniteQuery<IResponse>(
+  const {
+    isError,
+    isLoading,
+    isFetching,
+    data,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery<IResponse>(
     "posts",
     async ({ pageParam = 1 }) => {
-       console.log(pageParam)
-      const { data } = await axios.get(`${process.env.REACT_APP_FETCH_APP}/posts/page/${pageParam}?limit=3`);
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_FETCH_APP}/posts/page/${pageParam}?limit=3`
+      );
       return data;
     },
     {
       getNextPageParam: (lastPage) => {
-        if (lastPage.page >= lastPage.pages) return;
+        if (!lastPage.pages || lastPage.page >= lastPage.pages) return;
         return lastPage.page + 1;
       },
     }
@@ -24,12 +32,16 @@ export const Home = () => {
 
   useEffect(() => {
     const handleScroll = () => {
+      if (document.documentElement.scrollHeight <= window.innerHeight)
+        return;
 
-
-      if (document.documentElement.scrollHeight <= window.innerHeight) return;
-
-      if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight -200) {
+      if (
+        window.innerHeight + document.documentElement.scrollTop >=
+          document.documentElement.offsetHeight - 100 &&
+        !hasFetched
+      ) {
         fetchNextPage();
+        setHasFetched(true);
       }
     };
 
@@ -37,7 +49,7 @@ export const Home = () => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [fetchNextPage]);
+  }, [fetchNextPage, hasFetched]);
 
   if (isLoading) {
     return <div>Loading...</div>;
