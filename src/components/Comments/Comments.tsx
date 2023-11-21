@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store";
@@ -25,6 +25,11 @@ const Comments: React.FC<IProps> = ({ commentsArr = [], post }) => {
   const commentRef = useRef<HTMLInputElement>(null);
   const { user } = useSelector((state: RootState) => state.auth);
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    setComments(commentsArr);
+  }
+  , [commentsArr]);
 
   const handleAddComment = async () => {
     if (!user || !commentRef.current?.value) return;

@@ -1,10 +1,10 @@
 import { FC, useRef, useState } from "react";
 import styled from "styled-components";
-import { IUser } from "../../interfaces/interfaces";
+import { IResponse, IUser } from "../../interfaces/interfaces";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import { StyledInput } from "../Input/Input.styles";
 import axios from "axios";
-import { useMutation } from "react-query";
+import { InfiniteData, QueryClient, useMutation, useQueryClient } from "react-query";
 import { useAppDispatch } from "../../state/store";
 import { userUpdated } from "../../state/features/auth/authSlice";
 
@@ -56,6 +56,7 @@ const ChangeName: FC<IProps> = ({ user }) => {
   const [error, setError] = useState<string | undefined>("");
   const [message, setMessage] = useState<string | undefined>("");
   const [wait, setWait] = useState(false);
+  const queryClient = useQueryClient();
   const mutation = useMutation(updateUser)
   const dispatch = useAppDispatch();
 
@@ -77,7 +78,10 @@ const ChangeName: FC<IProps> = ({ user }) => {
       return setWait(false);
     }
 
-    const res = await mutation.mutateAsync(updatedUser)
+    const res = await mutation.mutateAsync(updatedUser, {
+      onSuccess: async ( ) => {
+         await queryClient.invalidateQueries()
+    }})
     .catch((err) => {
       setError(err.message);
       setWait(false);

@@ -25,6 +25,12 @@ export interface IResponse {
   page: number;
 }
 
+export interface IInfinitResponse {
+  pageParas: Array<any>,
+  pages: Array<IResponse>
+}
+
+
 export interface IPost {
   desc: string;
   photo: string;

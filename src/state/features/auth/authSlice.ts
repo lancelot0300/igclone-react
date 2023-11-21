@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IUser } from "../../../interfaces/interfaces";
+import { getUserFromCookie } from "../../../utils/userFromCookie";
 
 
 interface IInitialState {
@@ -9,7 +10,7 @@ interface IInitialState {
 
 
 const initialState: IInitialState = {
-  user: null,
+  user: getUserFromCookie(),
 };
 
  const authSlice = createSlice({
@@ -17,7 +18,6 @@ const initialState: IInitialState = {
   initialState,
   reducers: {
     loginSuccess: (state, action: PayloadAction<IUser>) => {
-      localStorage.setItem("user", JSON.stringify(action.payload));
       state.user = action.payload;
     },
     loginFailure: (state) => {

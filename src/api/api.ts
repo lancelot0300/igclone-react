@@ -1,11 +1,11 @@
 import axios from "axios";
 import {
   IComment,
-  ILikes,
   IPost,
   IPostsResponse,
+  IResponse,
 } from "../interfaces/interfaces";
-import { QueryClient } from "react-query";
+import { InfiniteData, QueryClient, QueryObserverResult } from "react-query";
 
 export const createPost = async (post: IPost) => {
   try {
@@ -76,11 +76,24 @@ export const removePost = async (_id: string, queryClient: QueryClient) => {
     return console.log(error);
   }
 
-  queryClient.setQueryData<IPostsResponse[]>("posts", (oldData) => {
-    if (!oldData) return [];
-    return oldData.filter((post) => post._id !== _id);
+  queryClient.setQueryData<InfiniteData<IResponse>>(["posts"], (oldData) => {
+    if (!oldData) return {
+      pageParams: [],
+      pages: [],
+    };
+  
+    return {
+      pageParams: oldData.pageParams,
+      pages: oldData.pages.map((page) => {
+        return {
+          ...page,
+          posts: page.posts.filter((post) => post._id !== _id),
+        };
+      },
+      ),
+    };
   });
-};
+}
 
 export const removeComment = async (
   id: string,
@@ -96,15 +109,28 @@ export const removeComment = async (
       }
     );
 
-    queryClient.setQueryData<IPostsResponse[]>("posts", (oldData) =>
-      oldData
-        ? oldData.map((p) =>
-            p._id === postId
-              ? { ...p, comments: p.comments.filter((com) => com._id !== id) }
-              : p
-          )
-        : []
-    );
+    queryClient.setQueryData<InfiniteData<IResponse>>(["posts"], (oldData) => {
+      if (!oldData) return {
+        pageParams: [],
+        pages: [],
+      };
+    
+      return {
+        pageParams: oldData.pageParams,
+        pages: oldData.pages.map((page) => ({
+          ...page,
+          posts: page.posts.map((post) => {
+            if (post._id === postId) {
+              return {
+                ...post,
+                comments: post.comments.filter((com) => com._id !== id),
+              };
+            }
+            return post;
+          }),
+        })),
+      };
+    });
 
     setComments((prevComments) => prevComments.filter((com) => com._id !== id));
   } catch (error) {
@@ -131,14 +157,30 @@ export const addComment = async (
 
     const newComment = res.data.comment;
 
-    queryClient.setQueryData<IPostsResponse[]>("posts", (oldData) =>
-      oldData
-        ? oldData.map((p) =>
-            p._id === postId
-              ? { ...p, comments: [...p.comments, newComment] }
-              : p
-          )
-        : []
+    queryClient.setQueryData<InfiniteData<IResponse>>(["posts"], (oldData) => {
+      if (!oldData) return {
+        pageParams: [],
+        pages: [],
+      };
+    
+      return {
+        pageParams: oldData.pageParams,
+        pages: oldData.pages.map((page) => {
+          return {
+            ...page,
+            posts: page.posts.map((post) => {
+              if (post._id === postId) {
+                return {
+                  ...post,
+                  comments: [...post.comments, newComment],
+                };
+              }
+              return post;
+            }),
+          };
+        }),
+      };
+    }
     );
 
     setComments((prevComments) => [...prevComments, newComment]);
@@ -169,14 +211,30 @@ export const updateLikes = async (
       }
     );
 
-    queryClient.setQueriesData(
-      "posts",
-      (oldData: IPostsResponse[] | undefined) => {
-        if (!oldData) return [];
-        return oldData.map((post) =>
-          post._id === postId ? { ...post, likes: res.data} : post
-        );
-      }
+    queryClient.setQueryData<InfiniteData<IResponse>>(["posts"], (oldData) => {
+      if (!oldData) return {
+        pageParams: [],
+        pages: [],
+      };
+    
+      return {
+        pageParams: oldData.pageParams,
+        pages: oldData.pages.map((page) => {
+          return {
+            ...page,
+            posts: page.posts.map((post) => {
+              if (post._id === postId) {
+                return {
+                  ...post,
+                  likes: res.data,
+                };
+              }
+              return post;
+            }),
+          };
+        }),
+      };
+    }
     );
   }
   catch (error) {

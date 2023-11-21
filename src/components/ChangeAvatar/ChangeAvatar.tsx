@@ -1,9 +1,9 @@
 import { ChangeEvent, FC, useState } from "react";
-import { IUser } from "../../interfaces/interfaces";
+import { IResponse, IUser } from "../../interfaces/interfaces";
 import * as yup from "yup";
 import { FileDropArea, FileInput, FileMessage } from "../Input/Input.styles";
 import axios from "axios";
-import { useMutation } from "react-query";
+import { InfiniteData, QueryClient, useMutation, useQueryClient } from "react-query";
 import { useAppDispatch } from "../../state/store";
 import { userUpdated } from "../../state/features/auth/authSlice";
 
@@ -88,8 +88,13 @@ const schema = yup.object().shape({
 const ChangeAvatar: FC<IProps> = ({ user }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>();
+  const queryClient = useQueryClient();
   const fileMutation = useMutation(sendFile);
-  const updateUserMutation = useMutation(updateUser);
+  const updateUserMutation = useMutation(updateUser, {
+    onSuccess: () => {
+      queryClient.invalidateQueries();
+    }
+  });
   const dispatch = useAppDispatch();
 
 

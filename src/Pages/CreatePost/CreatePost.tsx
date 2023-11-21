@@ -29,18 +29,27 @@ const CreatePost = () => {
     if (!photo || !user) return;
 
     setWait(true);
-    const res = await fileMutation.mutateAsync(photo);
+    const res = await fileMutation.mutateAsync(photo)
+    .catch((err) => {
+      console.log(err);
+      setWait(false);
+    }
+    );
     const post: IPost = {
       desc,
       photo: res.fileUrl,
     };
 
-    const res2 = await postMutation.mutateAsync(post);
+    const res2 = await postMutation.mutateAsync(post)
+    .catch((err) => {
+      console.log(err);
+      setWait(false);
+    }
+    );
 
-    queryClient.setQueriesData("posts", (oldData: IPost[] | undefined) => {
-      if (!oldData) return [];
-      return [res2, ...oldData];
-    });
+    if (res2) {
+      queryClient.invalidateQueries("posts");
+    }
 
     setWait(false);
     navigate("/");
