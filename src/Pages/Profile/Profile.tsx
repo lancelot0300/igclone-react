@@ -3,9 +3,16 @@ import { ProfileImages } from "../../components/ProfileImages/ProfileImages";
 import { IPostsResponse, IProfile } from "../../interfaces/interfaces";
 import { useFetch } from "../../hooks/useFetch";
 import { Posts, User } from "./Profile.styles";
+import WithPostPortal from "../../components/PostPortal/WithPostPortal";
+import PostPortalContent from "../../components/PostPortalContent/PostPortalContent";
 
 
-const Profile = () => {
+interface IProps {
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+  showModal: boolean;
+}
+
+const Profile = ({setShowModal, showModal}: IProps) => {
   const { id } = useParams();
   const {data, isError, isFetching} = useFetch<IProfile>("/profile/" + id);
 
@@ -32,11 +39,13 @@ const Profile = () => {
       </User>
       <Posts>
         {posts?.map((post : IPostsResponse) => (
-          <ProfileImages key={post._id} post={post} />
+          <ProfileImages key={post._id} post={post} onClick={() => setShowModal(true)}
+          />
         ))}
       </Posts>
+      <PostPortalContent setShowModal={setShowModal} showModal={showModal} />
     </>
   );
 };
 
-export default Profile;
+export default WithPostPortal(Profile);

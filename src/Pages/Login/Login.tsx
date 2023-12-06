@@ -34,6 +34,33 @@ export const Login: FC = () => {
     password: yup.string().min(5).required("Password is required"),
   });
 
+  const loginTestUser = async () => {
+    try {
+      setLoading(true);
+      setStatus("");
+      const response = await axios.post(
+        `${process.env.REACT_APP_FETCH_APP}/auth/login/test`,
+        {
+          email: "",
+          password: "",
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      dispatch(loginSuccess(response.data));
+      navigate("/");
+    } catch (error) {
+      dispatch(loginFailure());
+      if (axios.isAxiosError<IError>(error)) {
+        if (error.response) {
+          setStatus(error.response.data.message);
+        }
+      }
+    }
+    setLoading(false);
+  }
+
   const onSubmit = async ({ email, password }: ILoginFormValues) => {
     try {
       setLoading(true);
@@ -106,6 +133,9 @@ export const Login: FC = () => {
         <ErrorMessage $isError={status}>{status}</ErrorMessage>
         <Button disabled={loading} type="submit">
           Log in
+        </Button>
+        <Button disabled={loading} type="button" onClick={loginTestUser}>
+          Log in as Test User
         </Button>
         <StyledMessage>
           No account ? <FormLink to="/register">Register</FormLink>

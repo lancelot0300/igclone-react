@@ -50,7 +50,7 @@ const App = () => {
                 <Route
                   path="/profile/:id"
                   element={
-                      <Profile/>
+                      <Profile />
                   }
                 ></Route>
                 <Route

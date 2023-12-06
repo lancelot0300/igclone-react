@@ -24,11 +24,10 @@ const initialState: IInitialState = {
       state.user = null;
     },
     logout: (state) => {
-      localStorage.removeItem("user");
+      document.cookie = 'user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
       state.user = null
     },
     userUpdated: (state, action: PayloadAction<IUser>) => {
-      localStorage.setItem("user", JSON.stringify(action.payload));
       state.user = action.payload;
     }
   },

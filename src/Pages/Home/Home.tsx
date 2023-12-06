@@ -27,6 +27,9 @@ export const Home = () => {
         if (!lastPage.pages || lastPage.page >= lastPage.pages) return;
         return lastPage.page + 1;
       },
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
     }
   );
 

@@ -22,23 +22,22 @@ export const LoggedDropdown: React.FC<LoggedDropdownProps> = ({ dropdownRef, onC
     const navigate = useNavigate();
 
     const handleLogoutClick = async () => {
-
-        const response = await axios.post(
-            `${process.env.REACT_APP_FETCH_APP}/auth/logout`,
-            {
-                withCredentials: true,
-            }
-        ).then((response) => {
-            console.log(response);
-        })
-        .catch((error) => {
-           return error;
+        try {
+            const response = await axios.post(
+                `${process.env.REACT_APP_FETCH_APP}/auth/logout`,
+                {},
+                {
+                    withCredentials: true,
+                }
+            );
+    
+            dispatch(logout());
+            navigate("/login");
+        } catch (error) {
+            console.log(error);
         }
-        )
-        dispatch(logout());
-        navigate("/login");
-
     };
+    
 
     return (
         <MenuProfileDropdown ref={dropdownRef}>

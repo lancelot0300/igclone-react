@@ -15,6 +15,7 @@ interface FormValues {
   email: string;
   password: string;
   confirmPassword: string;
+  nick: string;
 }
 
 
@@ -33,6 +34,8 @@ export const Register = () => {
       .string()
       .oneOf([yup.ref("password"), null], "Passwords must match")
       .required("Confirm password is required"),
+    nick: yup.string().min(3, "Minimum 3 letters").required("Nick is required").max(10, "Maximum 10 letters"),
+
   });
 
   const onSubmit = async ({ email, password }: FormValues) => {
@@ -55,6 +58,7 @@ export const Register = () => {
         email: "",
         password: "",
         confirmPassword: "",
+        nick: "",
       },
       validationSchema: schema,
       onSubmit,
@@ -93,6 +97,16 @@ export const Register = () => {
         $isError={errors.confirmPassword && touched.confirmPassword }
         isTouched={touched.confirmPassword}
         errorMessage={errors.confirmPassword}
+      />
+            <StyledInput
+        type="nick"
+        placeholder="Your nick"
+        name="nick"
+        value={values.nick}
+        onChange={handleChange}
+        $isError={errors.nick && touched.nick}
+        isTouched={touched.nick}
+        errorMessage={errors.nick}
       />
       <Button disabled={wait} type="submit">
         Register

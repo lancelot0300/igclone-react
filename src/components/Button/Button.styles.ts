@@ -13,7 +13,7 @@ export const StyledButton = styled.button`
   border-radius: 10px;
   transition: all 0.3s ease;
   cursor: pointer;
-  width:10%;
+  width:fit-content;
   min-width:120px;
 
   &:hover {
